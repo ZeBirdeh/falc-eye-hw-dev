@@ -1,0 +1,13 @@
+<html>
+  <title>Profile</title>
+</html>
+<body>
+  <h3 class="pagetitle">Profile</h3>
+
+  <p>Your classes</p>
+  <ul>
+    {{#each classes}}
+    <li><a href="/classes/{{id}}/home">{{data.name}}</a></li>
+    {{/each}}
+  </ul>
+</body>

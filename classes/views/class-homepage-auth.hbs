@@ -1,0 +1,17 @@
+{{#section 'head'}}
+<title>Class Home</title>
+{{/section}}
+<h3 class="pagetitle">{{name}} - Homepage</h3>
+<p><a href="/classes/school/{{schoolData.schoolnum}}">
+See other classes from {{schoolData.name}}</a></p>
+{{#if userStatus.enrolled}}
+  <p>You are enrolled in this class</p>
+  {{#if userStatus.admin}}
+    <a href="#">Admin - Review and manage this class</a>
+  {{/if}}
+{{/if}}
+<p>Class information</p>
+<p>{{description}}</p>
+<h4>Menu</h4>
+<p><a href="/classes/{{id}}/feed">Go to class feed</a></p>
+<p>No options yet</p>

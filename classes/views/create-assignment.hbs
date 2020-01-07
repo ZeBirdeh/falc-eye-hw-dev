@@ -1,0 +1,29 @@
+{{#section 'title'}}
+<title>Create new assignment</title>
+{{/section}}
+{{> user-header }}
+<h3 class="pagetitle">{{name}} - Homepage</h3>
+<p>Class information</p>
+<p>{{description}}</p>
+<h4>Create new assignment</h4>
+
+<div class="newform">
+<form method="post">
+  <input name="title" id="title" type="text" placeholder="Title" />
+  <input name="description" id="description" type="text" placeholder="Type a short description here"/>
+  <input name="workload" id="workload" type="range" class="slider" min="0" max="100" value="50"/>
+  <p id="worknum">50</p>
+  <input name="duedate" id="duedate" type="number" />
+  <input type="submit" />
+</form>
+</div>
+
+<script>
+var slider = document.getElementById("workload");
+var output = document.getElementById("worknum");
+output.innerHTML = slider.value; // Display the default slider value
+// Update the current slider value (each time you drag the slider handle)
+slider.oninput = function() {
+  output.innerHTML = this.value;
+}
+</script>

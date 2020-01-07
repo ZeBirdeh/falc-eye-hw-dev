@@ -1,0 +1,40 @@
+{{#section 'head'}}
+<title>Class Feed</title>
+{{/section}}
+<h3 class="pagetitle">{{classObj.name}} - Feed</h3>
+<p>{{classObj.description}}</p>
+{{#if classObj.userStatus.enrolled}}
+  <p>You are enrolled in this class</p>
+  {{#if classObj.userStatus.admin}}
+    <a href="#">Admin - Review and manage this class</a>
+  {{/if}}
+{{/if}}
+<p>All Items</p>
+<p>Total remaining workload: <span id="twl"></span></p>
+<div class="assignments">
+<ul>
+  {{#each assignments}}
+  <li>
+      <p class="h1">{{title}}</p>
+      <p class="small">Created on <span name="time">{{created}}</span></p>
+      <p>{{description}}</p>
+      <p>Expected workload: <span name="load">{{workload}}</span></p>
+  </li>
+  {{/each}}
+</ul>
+</div>
+<h4>Menu</h4>
+<p>No options yet</p>
+<script>
+  twl = 0
+  document.getElementsByName("load").forEach(elt => {
+    tempn = parseFloat(elt.innerHTML)
+    if (!isNaN(tempn)) {twl = twl + tempn}
+  })
+  document.getElementById("twl").innerHTML = twl
+</script>
+<script>
+  document.getElementsByName("time").forEach(elt => {
+    elt.innerHTML = new Date(parseInt(elt.innerHTML)*1000).toLocaleString()
+  })
+</script>
