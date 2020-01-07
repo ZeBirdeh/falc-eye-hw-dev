@@ -5,6 +5,7 @@ See https://keepachangelog.com/en/0.3.0/
 ### TODO
 → Add formatting to class pages
 → Fix URI parse error with % in parameter
+→ Change deserializeUser to use separate database, such as Redis
 
 >> alpha 1.1.1 << - [2020-01-06]
 ### Added

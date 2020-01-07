@@ -33,14 +33,7 @@ app.use(bodyParser.urlencoded({
    extended: false
 }));
 // Initialize cookies and session
-app.use(cookieParser());
-app.use(session({
-   secret: "secret",
-   resave: false,
-   saveUninitialized: true
-}));
-app.use(passport.initialize());
-app.use(passport.session());
+authentication.init.init(app);
 
 // Initializing different parts of the app
 require('./user-pages').init(app);

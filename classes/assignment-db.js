@@ -41,6 +41,13 @@ function createAssignment(classID, assignObj) {
   return addDoc;
 }
 
+// Update completion if done
+function setAssignmentCompleted(userID, classID, assignID) {
+  let assignRef = db.collection('classes').doc(classID).collection('assignments').doc(assignID);
+  let aDoc = assignRef.update({ completed: true });
+  return aDoc;
+}
+
 module.exports = {
   getAllAssignments: getAllAssignments,
   createAssignment: createAssignment

@@ -2,23 +2,26 @@ const passport = require('passport');
 const bcrypt = require('bcrypt');
 const LocalStrategy = require('passport-local').Strategy;
 const authUserDB = require('./authUserDB.js');
-
-// Serialize and deserialize user to store information for sessions
-passport.serializeUser(function(userdoc, done) {
-    console.log(`Serialized user with id ${userdoc.id}`);
-    done(null, userdoc.id);
-});
-
-passport.deserializeUser(function(userid, done) {
-    console.log(`Deserialized user with id ${userid}`);
-    authUserDB.getUserById(userid).then(doc => {
-        done(null, doc);
-      });
-});
+const session = require('express-session');
+const cookieParser = require('cookie-parser');
+const memoryStore = require('./memory-store-db.js');
 
 // The code to authenticate a user by comparing a given username-password combination
 function initPassport() {
   console.log("Passport initialized");
+  // Serialize and deserialize user to store information for sessions
+  passport.serializeUser(function(userdoc, done) {
+    console.log(`Serialized user with id ${userdoc.id}`);
+    done(null, userdoc.id);
+  });
+
+  passport.deserializeUser(function(userid, done) {
+  console.log(`Deserialized user with id ${userid}`);
+  //authUserDB.getUserById(userid).then(doc => {
+  //    done(null, doc);
+  //  });
+  memoryStore.get(userid, (err, session) => {done(null, session)});
+  });
   passport.use(new LocalStrategy(
     (username, password, done) => {
       authUserDB.getUsers(username).then(doc => {
@@ -37,6 +40,7 @@ function initPassport() {
             return done(null, false);
           }
           console.log(`Succesfully logged in ${username}`);
+          memoryStore.set(doc.id, {id: doc.id, data: docData}, err => {console.log(err)})
           return done(null, doc);
         });
       }).catch((err) => {
@@ -64,6 +68,18 @@ function initUser(app) {
   });
 }
 
+function init(app) {
+  app.use(cookieParser());
+  app.use(session({
+    store: memoryStore,
+    secret: "secret",
+    resave: false,
+    saveUninitialized: false
+  }));
+  app.use(passport.initialize());
+  app.use(passport.session());
+}
+
 function renderLoginForm(req, res) {
   console.log("Login form");
   res.render('user/loginform');
@@ -71,5 +87,6 @@ function renderLoginForm(req, res) {
 
 module.exports = {
     initPassport: initPassport,
-    initUser: initUser
+    initUser: initUser,
+    init: init
 }
