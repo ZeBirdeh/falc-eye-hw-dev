@@ -1,0 +1,9 @@
+.hide {
+  display: none;
+}
+
+.dropdown-details {
+  display: block;
+  overflow: hidden;
+}
+

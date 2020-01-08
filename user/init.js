@@ -6,6 +6,8 @@ const session = require('express-session');
 const cookieParser = require('cookie-parser');
 const memoryStore = require('./memory-store-db.js');
 
+const LOGIN_REDIRECT = '/';
+
 // The code to authenticate a user by comparing a given username-password combination
 function initPassport() {
   console.log("Passport initialized");
@@ -57,7 +59,7 @@ function initUser(app) {
     req.session.user = req.session.passport.user;
     req.session.save(function(err) {
       // session saved
-      res.redirect('/profile')
+      res.redirect(LOGIN_REDIRECT);
     });
   });
 

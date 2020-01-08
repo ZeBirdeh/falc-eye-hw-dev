@@ -1,5 +1,8 @@
 {{#section 'head'}}
 <title>Class Feed</title>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+<script src="http://localhost:5005/static/js/class-feed.js"></script>
+<link rel="stylesheet" type="text/css" href="http://localhost:5005/static/css/styles.css">
 {{/section}}
 <h3 class="pagetitle">{{classObj.name}} - Feed</h3>
 <p>{{classObj.description}}</p>
@@ -14,12 +17,20 @@
 <div class="assignments">
 <ul>
   {{#each assignments}}
-  <li>
+  <li><div class="assignment">
+    <div class="dropdown-trigger">
       <p class="h1">{{title}}</p>
       <p class="small">Created on <span name="time">{{created}}</span></p>
-      <p>{{description}}</p>
       <p>Expected workload: <span name="load">{{workload}}</span></p>
-  </li>
+    </div>
+    <div class="dropdown-details">
+      <p>{{description}}</p>
+      <div class="slidecontainer">
+        <input type="range" value="0" class="slider">
+      </div>
+    </div>
+    <p>Due <span name="time">{{expires}}</span></p>
+  </div></li>
   {{/each}}
 </ul>
 </div>

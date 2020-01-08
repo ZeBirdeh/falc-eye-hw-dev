@@ -42,13 +42,61 @@ function createAssignment(classID, assignObj) {
 }
 
 // Update completion if done
+function getAssignmentStatus(userID, classID, assignID) {
+  let assignDoc = db.collection('classes').doc(classID).collection('assignments').doc(assignID);
+  let userDoc = db.collection('users').doc(userID);
+  let interRef = db.collection('interactions')
+  let aDoc = interRef.where('assignment', '==', assignDoc).where('user', '==', userDoc).get().then(snapshot => {
+    if (snapshot.empty) {
+      return 'new';
+    }
+    var results = [];
+    snapshot.forEach(doc => {
+      results.push(doc.data().completed);
+    });
+    if (results[0]) {
+      return 'completed';
+    } else {
+      return 'viewed';
+    }
+  })
+  return aDoc;
+}
+
+function addAssignmentView(userID, classID, assignID) {
+  let assignDoc = db.collection('classes').doc(classID).collection('assignments').doc(assignID);
+  let userDoc = db.collection('users').doc(userID);
+  let interRef = db.collection('interactions');
+  let aDoc = interRef.add({
+    assignment: assignDoc,
+    user: userDoc,
+    completed: false
+  });
+  return aDoc;
+}
+
+// Returns promise with list of docs
 function setAssignmentCompleted(userID, classID, assignID) {
-  let assignRef = db.collection('classes').doc(classID).collection('assignments').doc(assignID);
-  let aDoc = assignRef.update({ completed: true });
+  let assignDoc = db.collection('classes').doc(classID).collection('assignments').doc(assignID);
+  let userDoc = db.collection('users').doc(userID);
+  let interRef = db.collection('interactions')
+  let aDoc = interRef.where('assignment', '==', assignDoc).where('user', '==', userDoc).get().then(snapshot => {
+    if (snapshot.empty) {
+      return;
+    }
+    var results = [];
+    snapshot.forEach(doc => {
+      results.push(doc.update({ completed: true }));
+    });
+    return Promise.all(results)
+  });
   return aDoc;
 }
 
 module.exports = {
   getAllAssignments: getAllAssignments,
-  createAssignment: createAssignment
+  createAssignment: createAssignment,
+  getAssignmentStatus: getAssignmentStatus,
+  addAssignmentView: addAssignmentView,
+  setAssignmentCompleted: setAssignmentCompleted
 }

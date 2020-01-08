@@ -43,6 +43,9 @@ const classesApp = require('./classes')
 app.use('/classes', classesApp);
 authentication.init.initUser(app);
 
+// Static app for files in /classes
+app.use('/static', express.static(path.join(__dirname, 'public')))
+
 app.get('/', function(req, res){
    if(req.session.page_views){
       req.session.page_views++;

@@ -1,11 +1,13 @@
 const getClasses = require('./get-classes.js');
 const createClass = require('./create-class.js');
 const createAssignment = require('./create-assignment.js')
+const assignmentAPI = require('./assignment-api.js');
 
 function init(app) {
     getClasses.init(app);
     createClass.init(app);
     createAssignment.init(app);
+    assignmentAPI.init(app);
 }
 
 // Import required modules
