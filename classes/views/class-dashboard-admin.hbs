@@ -1,0 +1,25 @@
+{{#section 'head'}}
+<title>Admin Dashboard</title>
+{{/section}}
+<div class="dashboard">
+<ul>
+  <li>
+    <p>Send out invite link</p>
+    <a class="btn">Create Link</a>
+    <p class="hidden invite-link"></p>
+  </li>
+  <li>
+    <a class="btn dropdown-trigger">Update text</a>
+    <div class="dropdown-details">
+      <p>Title</p>
+      <textarea class="line-input" autocomplete="off">{{title}}</textarea>
+      <p>Description</p>
+      <textarea class="large-input" autocomplete="off">{{description}}</textarea>
+      <p>Due date</p>
+      <textarea class="line-input" placeholder="">{{expires}}</textarea>
+      <p>Workload</p>
+      
+    </div>
+  </li>
+</ul>
+</div>
