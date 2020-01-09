@@ -1,9 +1,41 @@
-.hide {
-  display: none;
+input {
+  width: 100%;
 }
+input:focus, textarea:focus {
+  outline: none;
+}
+input.num-input {
+  width: 60px;
+  height: 20px;
+  border-radius: 5px;
+  border: 2px solid #888;
+  box-shadow: 0px 0px 3px 0px #888 inset;
+}
+input.num-input:invalid {
+  border: 2px solid red;
+}
+
+textarea {
+  resize: none;
+}
+
+/* div classes */
+
+div.large-col { width: 75%; }
+
+div.small-col { width: 25%; }
 
 .dropdown-details {
   display: block;
   overflow: hidden;
 }
 
+/* Display settings */
+
+.hide {
+  display: none;
+}
+
+.disabled {
+  color: #808080;
+}

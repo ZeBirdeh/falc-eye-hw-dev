@@ -5,7 +5,7 @@ const assignDB = require('./assignment-db.js');
 function init(app) {
   // Middleware for the feed api
   function feedMiddleware(req, res, next) {
-    if (false && !req.isAuthenticated()) {
+    if (!req.isAuthenticated()) {
       res.json({status: "unauthenticated"})
       return
     }

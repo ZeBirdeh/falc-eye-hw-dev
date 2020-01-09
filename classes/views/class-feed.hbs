@@ -19,17 +19,21 @@
   {{#each assignments}}
   <li><div class="assignment">
     <div class="dropdown-trigger">
-      <p class="h1">{{title}}</p>
+      <p class="title">{{title}}</p>
       <p class="small">Created on <span name="time">{{created}}</span></p>
       <p>Expected workload: <span name="load">{{workload}}</span></p>
     </div>
     <div class="dropdown-details">
       <p>{{description}}</p>
-      <div class="slidecontainer">
+      <div class="slide-container">
         <input type="range" value="0" class="slider">
       </div>
+      <a class="btn update-btn disabled">Update</a>
     </div>
     <p>Due <span name="time">{{expires}}</span></p>
+    {{#if isAuthor}}
+      <a class="btn edit-btn disabled">Edit assignment details</a>
+    {{/if}}
   </div></li>
   {{/each}}
 </ul>

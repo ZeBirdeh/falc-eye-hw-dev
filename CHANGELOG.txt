@@ -3,20 +3,21 @@ added/changed/deprecated/removed/fixed/security
 See https://keepachangelog.com/en/0.3.0/
 
 ### TODO
-→ Add formatting to class pages
 → Fix URI parse error with % in parameter
 → Change deserializeUser to use separate database, such as Redis
-→ Use caching (Redis) to store db responses (?)
-→ Adding classID and assignID to attributes on each assignment
-  then adding button to set completion
+→ Adding button to set completion
 → Add section for completed and hidden assignments
 
->> alpha 1.2.0 << - unreleased
+>> alpha 1.2.0 << - [2020-01-08]
 ### Added
 → Static file serving at /static (serving from /public)
 → API for client side assignment updating (requires auth)
+→ Assignment author
 ### Changed
 → Uses MemoryStore (in the absence of a Redis setup)
+→ class-feed UI improvements
+### Security
+→ Input validation for create-assignment and create-class forms
 
 >> alpha 1.1.1 << - [2020-01-06]
 ### Added

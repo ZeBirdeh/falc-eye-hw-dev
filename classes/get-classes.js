@@ -1,6 +1,7 @@
 const path = require('path');
 const classDB = require('./class-db.js');
 const assignDB = require('./assignment-db.js'); 
+const authMiddleware = require('./authentication-middleware.js');
 
 // Get the classes that correspond to a certain school
 function init(app) {
@@ -81,6 +82,9 @@ function init(app) {
         if (userStatus.enrolled) {
           assignDB.getAllAssignments(classID).then(assignObj => {
             assignObj.classObj = classObj;
+            assignObj.assignments.forEach(tempAssign => {
+              tempAssign.isAuthor = (tempAssign.author == req.user.id);
+            })
             res.render('class-feed', assignObj);
           })
         } else {
@@ -93,6 +97,22 @@ function init(app) {
     }
   });
 
+  // Settings for admins
+  app.get('/:classid/settings', authMiddleware(), (req, res) => {
+    let classID = req.params.classid;
+    let classObj = res.locals.classObj;
+    classDB.enrollStatus(req.user.data.username, classID).then(userStatus => {
+      classObj.userStatus = userStatus;
+      if (userStatus.admin) {
+        assignDB.getAllAssignments(classID).then(assignObj => {
+          assignObj.classObj = classObj;
+          res.render('class-dashboard-admin', assignObj);
+        })
+      } else {
+        res.render('no-auth', classObj);
+      }
+    });
+  })
   // Using GET query on /classes instead of /classes/#
   // Same code as above except params switched for query, and does not cache
   app.get('/', (req, res) => {
