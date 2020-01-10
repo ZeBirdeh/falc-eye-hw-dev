@@ -12,7 +12,10 @@ function getAllAssignments(classID) {
 
     var assignments = [];
     snapshot.forEach(doc => {
-      assignments.push(doc.data());
+      let docData = doc.data();
+      docData.id = doc.id;
+      docData.classID = classID;
+      assignments.push(docData);
     });
 
     return { "assignments": assignments };
@@ -48,16 +51,16 @@ function getAssignmentStatus(userID, classID, assignID) {
   let interRef = db.collection('interactions')
   let aDoc = interRef.where('assignment', '==', assignDoc).where('user', '==', userDoc).get().then(snapshot => {
     if (snapshot.empty) {
-      return 'new';
+      return {status: 'new', completion: 0};
     }
     var results = [];
     snapshot.forEach(doc => {
-      results.push(doc.data().completed);
+      results.push(doc.data().completion);
     });
-    if (results[0]) {
-      return 'completed';
+    if (results[0] >= 100) {
+      return {status: 'completed', completion: results[0]};
     } else {
-      return 'viewed';
+      return {status: 'viewed', completion: results[0]};
     }
   })
   return aDoc;
@@ -67,16 +70,24 @@ function addAssignmentView(userID, classID, assignID) {
   let assignDoc = db.collection('classes').doc(classID).collection('assignments').doc(assignID);
   let userDoc = db.collection('users').doc(userID);
   let interRef = db.collection('interactions');
-  let aDoc = interRef.add({
-    assignment: assignDoc,
-    user: userDoc,
-    completed: false
+  let aDoc = interRef.where('assignment', '==', assignDoc).where('user', '==', userDoc).get().then(snapshot => {
+    if (snapshot.empty) {
+      let newDoc = interRef.add({
+        assignment: assignDoc,
+        user: userDoc,
+        completion: 0
+      });
+      return newDoc;
+    }
   });
   return aDoc;
 }
 
 // Returns promise with list of docs
-function setAssignmentCompleted(userID, classID, assignID) {
+function setAssignmentCompletion(userID, classID, assignID, completion) {
+  if (!(parseInt(completion) == completion) || (completion < 0) || (completion > 100)) {
+    return new Promise((res, rej) => {res(null)});
+  }
   let assignDoc = db.collection('classes').doc(classID).collection('assignments').doc(assignID);
   let userDoc = db.collection('users').doc(userID);
   let interRef = db.collection('interactions')
@@ -86,9 +97,9 @@ function setAssignmentCompleted(userID, classID, assignID) {
     }
     var results = [];
     snapshot.forEach(doc => {
-      results.push(doc.update({ completed: true }));
+      results.push(interRef.doc(doc.id).update({ completion: parseInt(completion) }));
     });
-    return Promise.all(results)
+    return Promise.all(results);
   });
   return aDoc;
 }
@@ -98,5 +109,5 @@ module.exports = {
   createAssignment: createAssignment,
   getAssignmentStatus: getAssignmentStatus,
   addAssignmentView: addAssignmentView,
-  setAssignmentCompleted: setAssignmentCompleted
+  setAssignmentCompletion: setAssignmentCompletion
 }

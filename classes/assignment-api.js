@@ -9,14 +9,14 @@ function init(app) {
       res.json({status: "unauthenticated"})
       return
     }
-    userID = "default";
+    let userID = "default";
     if (req.user) {
       userID = req.user.id;
     }
-    classID = req.query.class;
-    assignID = req.query.assign;
-    if ((!userID) || (!classID) || (!assignID)) {
-      console.log(`${classID} / ${!classID}`);
+    let isPOST = !req.query.class;
+    let classID = isPOST ? req.body.class : req.query.class;
+    let assignID = isPOST ? req.body.assign : req.query.assign;
+    if (!userID || !classID || !assignID) {
       res.json({status: "error"})
       return
     }
@@ -34,27 +34,36 @@ function init(app) {
     classID = req.query.class;
     assignID = req.query.assign;
     assignDB.getAssignmentStatus(userID, classID, assignID).then(status => {
-      res.json({status: status});
+      res.json(status);
     })
   })
 
-  app.post('/api/feed/complete-assignment', feedMiddleware, (req, res) => {
+  app.post('/api/feed/view-assignment', feedMiddleware, (req, res) => {
     userID = req.user.id;
-    classID = req.query.class;
-    assignID = req.query.assign;
-    assignDB.setAssignmentCompleted(userID, classID, assignID).then(ref => {
+    classID = req.body.class;
+    assignID = req.body.assign;
+    assignDB.addAssignmentView(userID, classID, assignID).then(ref => {
       if (!ref) {
         res.json({status: 'failure'})
         return
       }
-      ref.then(docs => {
-        docs.forEach(doc => {
-          let docData = doc.data();
-          console.log(`[LOG] assignment-api: Set ${docData.assignment.id} completed for ${docData.user.id}`)
-        })
-      })
       res.json({status: 'success'})
     })
+  })
+
+  app.post('/api/feed/update-assignment', feedMiddleware, (req, res) => {
+    userID = req.user.id;
+    classID = req.body.class;
+    assignID = req.body.assign;
+    completion = req.body.completion;
+    assignDB.setAssignmentCompletion(userID, classID, assignID, completion).then(ref => {
+      if (!ref) {
+        res.json({status: 'failure'})
+        return
+      }
+      // ref is a write result
+      res.json({status: 'success'})
+    }).catch(err => { console.error(err); })
   })
 }
 
