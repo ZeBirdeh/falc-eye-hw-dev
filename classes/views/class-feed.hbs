@@ -4,18 +4,18 @@
 <script src="http://localhost:5005/static/js/class-feed.js"></script>
 <link rel="stylesheet" type="text/css" href="http://localhost:5005/static/css/styles.css">
 {{/section}}
-<h3 class="pagetitle">{{classObj.name}} - Feed</h3>
+<p class="title">{{classObj.name}} - Feed</p>
 <p>{{classObj.description}}</p>
 {{#if classObj.userStatus.enrolled}}
   <p>You are enrolled in this class</p>
   {{#if classObj.userStatus.admin}}
-    <a href="#">Admin - Review and manage this class</a>
+    <a href="/classes/{{classID}}/settings">Admin - Review and manage this class</a>
   {{/if}}
 {{/if}}
 <p id="alerts"></p>
 <p>All Items</p>
 <p>Total remaining workload: <span id="twl"></span></p>
-<h4>Outstanding assignments</h4>
+<p class="heading">Outstanding assignments</p>
 <div class="assignments">
 <ul>
   {{#each assignments}}
@@ -59,7 +59,7 @@
 </ul>
 </div>
 <hr width="80%">
-<h4>Completed assignments</h4>
+<p class="heading">Completed assignments</p>
 <div class="completed-assignments">
 <ul>
 </ul>

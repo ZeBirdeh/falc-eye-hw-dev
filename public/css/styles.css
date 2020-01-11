@@ -1,7 +1,11 @@
+/* Base global formatting */
+
 body {
   background-color: white;
   font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
   font-size: 15px;
+  margin: 0;
+  padding: 0;
 }
 input {
   width: 100%;
@@ -22,8 +26,11 @@ input.num-input:invalid {
 
 textarea {
   resize: none;
+  font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  font-size: 15px;
 }
 
+/* a tag buttons */
 a {
   margin: 0;
 }
@@ -52,26 +59,40 @@ p {
   margin: 0px 0px 10px 0px;
 }
 
-li {
+ul {
+  margin: 0;
+  padding: 0;
+}
+
+ul li {
   list-style-type: none;
   margin: 0;
   padding: 10px;
+  overflow-y: auto;
 }
 
 div {
   display: block;
+  box-sizing: border-box;
   margin: 0;
   padding: 0;
 }
-/* div classes */
 
-div.large-col { float: left; min-height: 1px; width: 75%; }
-div.small-col { float: left; min-height: 1px; width: 25%; }
-div.sm15-col { float: left; min-height: 1px; width: 15%; }
-div.sm10-col { float: left; min-height: 1px; width: 10%; }
+/* Vertical grid classes */
 
+.large-col { float: left; min-height: 1px; width: 75%; }
+.small-col { float: left; min-height: 1px; width: 25%; }
+.sm15-col { float: left; min-height: 1px; width: 15%; }
+.sm10-col { float: left; min-height: 1px; width: 10%; }
+
+/* Assignment display settings */
+
+.assignments, .completed-assignments {
+  overflow-y: auto;
+}
 div.assignment {
   width: 80%;
+  float: left;
   border: 1px solid black;
   border-radius: 5px;
   background-color: #e0e0f0;
@@ -90,9 +111,72 @@ div.dropdown-details {
   background-color: #ddd;
 }
 
-div.all-padded { padding: 10px 10px 10px 10px; }
-div.ew-padded { padding: 0px 10px 0px 10px; }
-div.ns-padded { padding: 10px 0px 10px 0px; }
+/* Top navigation header */
+
+.navbar {
+  width: 100%;
+  height: 48px;
+  position: fixed;
+  top: 0;
+  background-color: #262630;
+  box-shadow: 0px 0px 5px 0px #444;
+  z-index: 100;
+}
+.navbar a {
+  display: block;
+  float: left;
+  padding: 15px 15px 15px 15px;
+  font-size: 16px;
+  text-decoration: none;
+  color: white;
+  text-align: center;
+  transition: background-color 0.4s;
+}
+.navbar a:hover {
+  background-color: rgba(255, 255, 255, 0.2);
+}
+.navbar-right {
+  float: right;
+}
+
+/* The height of the navbar is added to the margin of content */
+.sidebar {
+  width: 180px;
+  height: 100%;
+  overflow-x: hidden;
+  position: fixed;
+  left: 0;
+  background-color: #eee;
+  padding: 20px 15px 20px 15px;
+}
+.content {
+  margin-top: 48px;
+  width: calc(100% - 180px);
+  margin-left: 180px;
+  padding: 20px 15px 20px 15px;
+}
+@media screen and (max-width: 600px) {
+  .sidebar {
+    display: none;
+  }
+  .content {
+    width: 100%;
+    margin-left: 0px;
+  }
+}
+
+.all-padded { padding: 10px 10px 10px 10px; }
+.ew-padded { padding: 0px 10px 0px 10px; }
+.ns-padded { padding: 10px 0px 10px 0px; }
+
+textarea.line-input {
+  height: 24px;
+}
+textarea.large-input {
+  height: 120px;
+  width: 400px;
+  max-width: 80%;
+}
 
 /* Inspired by https://codepen.io/brandonmcconnell/pen/oJBVQW */
 input[type="range"] {
@@ -141,11 +225,9 @@ input[type="range"] {
   }
 }
 
-/* Display settings */
+/* Additional display settings */
 
-.hide {
-  display: none;
-}
+.hide { display: none; }
 
 a.disabled {
   background-image: none;
@@ -162,6 +244,8 @@ a.disabled:active {
   background-color: #ddd;
   color: #808080;
 }
+
+/* Text formatting */
 
 .num-display {
   font-family: Georgia, "Times New Roman", Times, serif;
@@ -181,6 +265,30 @@ p.num-display {
   font-size: 22px;
   font-weight: bold;
 }
+.subtitle, .heading{
+  font-size: 18px;
+  font-weight: bold;
+}
 .load {
   font-weight: bold;
+}
+
+/* Other image/graphic formatting */
+.triangle-down {
+	width: 0;
+	height: 3px;
+	border-left: 5px solid transparent;
+	border-right: 5px solid transparent;
+  border-top: 5px solid white;
+  display: inline-block;
+}
+.menu-icon {
+  display: inline-block;
+  margin-right: 5px;
+}
+.menu-icon div {
+  width: 16px;
+  height: 2px;
+  margin: 3px 0px 0px 0px;
+  background-color: white;
 }

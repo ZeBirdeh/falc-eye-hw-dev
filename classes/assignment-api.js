@@ -1,5 +1,3 @@
-const path = require('path');
-const classDB = require('./class-db.js');
 const assignDB = require('./assignment-db.js'); 
 
 function init(app) {

@@ -109,7 +109,7 @@ function init(app) {
           res.render('class-dashboard-admin', assignObj);
         })
       } else {
-        res.render('no-auth', classObj);
+        res.render('no-auth');
       }
     });
   })

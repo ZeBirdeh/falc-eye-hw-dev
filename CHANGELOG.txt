@@ -5,8 +5,23 @@ See https://keepachangelog.com/en/0.3.0/
 ### TODO
 → Fix URI parse error with % in parameter
 → Change deserializeUser to use separate database, such as Redis
-→ Adding button to set completion
-→ Add section for completed and hidden assignments
+→ Add section for hidden and past assignments
+→ Set maximum length for description in forms
+→ class enrollment link
+→ user registration page (unique usernames)
+→ view personal feed (all assignments from all courses, limit 10)
+
+>> alpha 1.2.1 << - unreleased
+### Added
+→ slider formatting, assignment feed update feature
+→ section for completed and uncompleted assignments
+→ Class admin settings page for updating information
+### Changed
+→ percentage value for keeping track of assignment completion
+→ additional class-feed UI and style changes
+### Fixed
+→ Issue with API not serving data
+
 
 >> alpha 1.2.0 << - [2020-01-08]
 ### Added
@@ -19,6 +34,7 @@ See https://keepachangelog.com/en/0.3.0/
 ### Security
 → Input validation for create-assignment and create-class forms
 
+
 >> alpha 1.1.1 << - [2020-01-06]
 ### Added
 → Input validation on create-class server-side
@@ -26,6 +42,7 @@ See https://keepachangelog.com/en/0.3.0/
 ### Changed
 → Separated classes into separate app
 → Views and layouts
+
 
 >> alpha 1.1.0 << - [2020-01-03]
 ### Added

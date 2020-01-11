@@ -1,24 +1,61 @@
 {{#section 'head'}}
 <title>Admin Dashboard</title>
+<link rel="stylesheet" type="text/css" href="http://localhost:5005/static/css/styles.css">
 {{/section}}
 <div class="dashboard">
 <ul>
   <li>
-    <p>Send out invite link</p>
-    <a class="btn">Create Link</a>
-    <p class="hidden invite-link"></p>
+    <div class="all-padded">
+      <p>Send out invite link</p>
+      <a class="btn">Create Link</a>
+      <p class="hidden"><span id="invite-link"></span></p>
+    </div>
   </li>
   <li>
-    <a class="btn dropdown-trigger">Update text</a>
-    <div class="dropdown-details">
-      <p>Title</p>
-      <textarea class="line-input" autocomplete="off">{{title}}</textarea>
-      <p>Description</p>
-      <textarea class="large-input" autocomplete="off">{{description}}</textarea>
-      <p>Due date</p>
-      <textarea class="line-input" placeholder="">{{expires}}</textarea>
-      <p>Workload</p>
-      
+    <div class="all-padded">
+      <a class="btn dropdown-trigger">Update class details</a>
+      <div class="dropdown-details">
+        <p>Group name</p>
+        <textarea class="line-input" autocomplete="off">{{classObj.name}}</textarea>
+        <p>Description</p>
+        <textarea class="large-input" autocomplete="off">{{classObj.description}}</textarea>
+      </div>
+    </div>
+  </li>
+  <li>
+    <div class="all-padded">
+      <p>Manage assignments</p>
+    <ul>
+        {{#each assignments}}
+        <li>
+          <div class="assignment" data-aid="{{id}}" data-cid="{{classID}}" data-max="{{workload}}">
+            <div class="dropdown-trigger">
+              <div class="all-padded">
+                <p class="title">{{title}}</p>
+                <p class="small">Created on <span name="time">{{created}}</span></p>
+                <p>Expected workload: <span name="load">{{workload}}</span></p>
+              </div>
+            </div>
+            <div class="dropdown-details">
+              <div class="all-padded">
+                <span class="small">Description:</span>
+                <p>{{description}}</p>
+              </div>
+            </div>
+            <div class="all-padded">
+              <p>Due <span name="time">{{expires}}</span></p>
+              {{#if isAuthor}}
+                <a class="btn edit-btn disabled">Edit assignment details</a>
+                <span class="small">(You are the author of this assignment)</span>
+              {{/if}}
+            </div>
+          </div>
+          <div class="sm15-col">
+            <a class="btn delete-btn">Delete</a>
+          </div>
+        </li>
+        {{/each}}
+      </ul>
     </div>
   </li>
 </ul>
