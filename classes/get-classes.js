@@ -82,6 +82,7 @@ function init(app) {
         if (userStatus.enrolled) {
           assignDB.getAllAssignments(classID).then(assignObj => {
             assignObj.classObj = classObj;
+            assignObj.classID = req.params.classid;
             assignObj.assignments.forEach(tempAssign => {
               tempAssign.isAuthor = (tempAssign.author == req.user.id);
             })
@@ -93,7 +94,7 @@ function init(app) {
       });
     } else {
       // If not logged in redirect
-      res.redirect('/loginform');
+      res.redirect('/login');
     }
   });
 
@@ -106,6 +107,7 @@ function init(app) {
       if (userStatus.admin) {
         assignDB.getAllAssignments(classID).then(assignObj => {
           assignObj.classObj = classObj;
+          assignObj.classID = classID;
           res.render('class-dashboard-admin', assignObj);
         })
       } else {
@@ -113,6 +115,58 @@ function init(app) {
       }
     });
   })
+
+  // Generating password reset token
+  /*
+  app.post('/resetPassword', authMiddleware(), (req, res) => {
+    let classID = req.params.classid;
+    let classObj = res.locals.classObj;
+    let SECURE_SECRET = 'CYTm6WvWTR16J2JEjZj9SrQOggbd9ULP';
+    let expires = Math.floor(Date.now() / 1000) + 3600;
+    let combined_string = classID + '.' + expires;
+    bcrypt.hash(combined_string, 12, function(err, hash) {
+      if (err) {
+        res.json({ status: 'error' })
+        return;
+      }
+      let linkToken = Buffer.from(combined_string).toString('base64') + '.' + hash;
+      res.json( { status: 'success', token: linkToken } )
+    });
+  })
+  */
+
+  // Following invite link to enroll in class
+  app.get('/invite/:inviteToken', (req, res) => {
+    let inviteToken = req.params.inviteToken;
+    if (req.isAuthenticated()) {
+      if (!inviteToken || !isAlphaNumeric(inviteToken)) { 
+        res.render('invalid-invite');
+        return;
+      }
+      classDB.getInvite(inviteToken).then(inviteData => {
+        if (!inviteData) {
+          res.render('invalid-invite');
+          return;
+        }
+        if (inviteData.expires < (Date.now() / 1000)) {
+          res.render('invalid-invite');
+          return;
+        }
+        classDB.enrollStudent(req.user.data.username, inviteData.class, false).then(enrollDoc => {
+          // Render invite page that redirects after a second
+          res.render('valid-invite', {class: inviteData.class});
+        })
+      }).catch(err => {
+        console.error(err);
+        res.render('invalid-invite');
+      })
+    } else {
+      // Prompt user to log in
+      let redirectStr = Buffer.from(req.url).toString('hex');
+      res.redirect('/login?redirect='+redirectStr);
+    }
+  });
+
   // Using GET query on /classes instead of /classes/#
   // Same code as above except params switched for query, and does not cache
   app.get('/', (req, res) => {

@@ -1,0 +1,12 @@
+{{#section 'head'}}
+<title>Invite</title>
+{{/section}}
+<p class="title">
+  Success!
+</p>
+<p>You've have successfully joined</p>
+<p>You will be redirected momentarily...</p>
+<script>
+  var redirect = {{class}};
+  window.setTimeout(function(){ window.location = "http://localhost:5005/classes/"+redirect+"/home"; },3000)
+</script>

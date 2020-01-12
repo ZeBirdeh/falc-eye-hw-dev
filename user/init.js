@@ -54,7 +54,7 @@ function initPassport() {
 }
 
 function initUser(app) {
-  app.post('/login', passport.authenticate('local', { failureRedirect: '/loginform' }),
+  app.post('/login', passport.authenticate('local', { failureRedirect: '/login' }),
   function(req, res) {
     req.session.user = req.session.passport.user;
     req.session.save(function(err) {
@@ -63,7 +63,7 @@ function initUser(app) {
     });
   });
 
-  app.get('/loginform', renderLoginForm);
+  app.get('/login', renderLoginForm);
 
   app.get('/secure', (req, res) => {
     res.send(req.session);
@@ -84,7 +84,7 @@ function init(app) {
 
 function renderLoginForm(req, res) {
   console.log("Login form");
-  res.render('user/loginform');
+  res.render('user/login');
 }
 
 module.exports = {

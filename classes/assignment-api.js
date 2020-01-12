@@ -1,4 +1,7 @@
 const assignDB = require('./assignment-db.js'); 
+const classDB = require('./class-db.js')
+const crypto = require('crypto');
+const base58 = require('base-58');
 
 function init(app) {
   // Middleware for the feed api
@@ -63,6 +66,49 @@ function init(app) {
       res.json({status: 'success'})
     }).catch(err => { console.error(err); })
   })
+
+  // API call, post to get valid token and add to invites database
+  app.post('/api/:classid/new-invite', (req, res) => {
+    // Check that user is an admin of the class of classID
+    let classID = req.params.classid;
+    let expires = Math.floor(Date.now() / 1000) + parseInt(req.body.duration);
+    if (isNaN(expires)) { 
+      res.json({status: 'invalid'});
+      return;
+    }
+    new Promise(genToken).then(validToken => {
+      console.log('[LOG] assignment-api: Valid token generated')
+      classDB.addInviteLink(classID, expires, validToken).then(inviteDoc => {
+        console.log(`[LOG] get-classes: New invite link ${validToken} for ${classID}`);
+        res.json({status: 'success', token: validToken, expires: expires});
+      })
+    }).catch(err => {
+      console.error(err);
+      res.json({status: 'error'});
+    })
+  })
+}
+
+// Creates a whole ton of nested promises
+function genToken(resolve, reject, c = 0) {
+  crypto.randomBytes(6, function(ex, buf) {
+    let token = base58.encode(buf);
+    classDB.checkInviteUsed(token).then(isUsed => {
+      if (isUsed) {
+        if (c < 10) {
+          genToken(resolve, reject, c + 1);
+        } else { // Stop once it makes 10 attemps
+          reject('too many calls')
+        }
+      } else {
+        resolve(token);
+      }
+    }).catch(err => {
+      console.log('[WARN] get-classes: Failed to generate token')
+      console.error(err);
+      reject(err);
+    })
+  });
 }
 
 // Removes all non-alphanumeric characters from a string

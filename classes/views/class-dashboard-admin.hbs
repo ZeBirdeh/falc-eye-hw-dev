@@ -1,14 +1,16 @@
 {{#section 'head'}}
 <title>Admin Dashboard</title>
-<link rel="stylesheet" type="text/css" href="http://localhost:5005/static/css/styles.css">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+<script src="http://localhost:5005/static/js/class-admin.js"></script>
 {{/section}}
-<div class="dashboard">
+<div class="dashboard" data-cid="{{classID}}">
 <ul>
   <li>
     <div class="all-padded">
       <p>Send out invite link</p>
-      <a class="btn">Create Link</a>
-      <p class="hidden"><span id="invite-link"></span></p>
+      <a class="btn invite-btn">Create Link</a>
+      <p><span id="invite-link"></span></p>
+      <p class="small">Expires: <span id="invite-expire"></span></p>
     </div>
   </li>
   <li>
@@ -19,6 +21,7 @@
         <textarea class="line-input" autocomplete="off">{{classObj.name}}</textarea>
         <p>Description</p>
         <textarea class="large-input" autocomplete="off">{{classObj.description}}</textarea>
+        <a class="btn update-btn">Save changes</a>
       </div>
     </div>
   </li>

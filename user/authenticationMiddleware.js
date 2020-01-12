@@ -6,7 +6,7 @@ function authenticationMiddleware() {
             return next(); // Return so the rest of the function isn't called
         }
         console.log(`Failed to authenticate`)
-        res.redirect('/loginform');
+        res.redirect('/login');
     }
 }
 

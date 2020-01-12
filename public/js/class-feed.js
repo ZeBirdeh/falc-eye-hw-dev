@@ -1,5 +1,5 @@
 // GET and POST helper functions for using API
-const HOST = "http://localhost:5005"
+const HOST = window.location.host
 function getAssignmentStatus(classID, assignID) {
   var url = HOST + '/classes/api/feed/assignment-status'
   return new Promise((resolve, reject) => {

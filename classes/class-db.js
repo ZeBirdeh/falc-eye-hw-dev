@@ -155,6 +155,63 @@ function enrollStatus(username, classID) {
   return getDoc;
 }
 
+// Gets all invite links corresponding to a class
+function getNumClassInvites(classID) {
+  let inviteRef = db.collection('invites');
+  let sizeProm = inviteRef.where('class', '==', classID).get().then(snapshot => {
+    return snapshot.size();
+  })
+  return sizeProm;
+}
+
+// Gets non-expired invites with specific
+function checkInviteUsed(token) {
+  let inviteDoc = db.collection('invites').doc(token);
+  let aDoc = inviteDoc.get().then(doc => {
+    if (!doc.exists) {
+      return false;
+    }
+    let expireTime = doc.get('expires');
+    if ((Date.now() / 1000) > parseInt(expireTime) + 3 * 24 * 3600) {
+      return false;
+    } else {
+      return true;
+    }
+  });
+  return aDoc;
+}
+
+function getInvite(token) {
+  let inviteDoc = db.collection('invites').doc(token);
+  let aDoc = inviteDoc.get().then(doc => {
+    if (!doc.exists) {
+      return;
+    }
+    return doc.data();
+  });
+  return aDoc;
+}
+
+// Adds a new invite link to the database
+function addInviteLink(classID, expires, token) {
+  let inviteRef = db.collection('invites').doc(token);
+  let inviteDoc = null;
+  if (expires === false) {
+    inviteDoc = inviteRef.set({
+      class: classID,
+      expires: 0,
+      permanent: true
+    })
+  } else {
+    inviteDoc = inviteRef.set({
+      class: classID,
+      expires: expires,
+      permanent: false
+    });
+  }
+  return inviteDoc;
+}
+
 // Removes all non-alphanumeric/space/apostrophe/paren characters from a string
 function cleanAlpha(inputStr) {
   return inputStr.replace(/[^0-9a-zA-Z \'()]/g, '')
@@ -166,5 +223,9 @@ module.exports = {
   getClassSchoolDataFromID: getClassSchoolDataFromID,
   getClasses: getClasses,
   enrollStudent: enrollStudent,
-  enrollStatus: enrollStatus
+  enrollStatus: enrollStatus,
+  checkInviteUsed: checkInviteUsed,
+  getNumClassInvites: getNumClassInvites,
+  getInvite: getInvite,
+  addInviteLink: addInviteLink
 }

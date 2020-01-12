@@ -7,11 +7,20 @@ See https://keepachangelog.com/en/0.3.0/
 → Change deserializeUser to use separate database, such as Redis
 → Add section for hidden and past assignments
 → Set maximum length for description in forms
-→ class enrollment link
+→ verify user is admin of class when generating
 → user registration page (unique usernames)
 → view personal feed (all assignments from all courses, limit 10)
 
->> alpha 1.2.1 << - unreleased
+>> alpha 1.2.3 << - unrelease
+
+>> alpha 1.2.2 << - [2020-01-12]
+### Added
+→ Class invite link functionality
+→ Admin dashboard javascript
+### Changed
+→ URL for login from /loginform to /login
+
+>> alpha 1.2.1 << - [2020-01-11]
 ### Added
 → slider formatting, assignment feed update feature
 → section for completed and uncompleted assignments
