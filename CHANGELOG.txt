@@ -7,11 +7,16 @@ See https://keepachangelog.com/en/0.3.0/
 → Change deserializeUser to use separate database, such as Redis
 → Add section for hidden and past assignments
 → Set maximum length for description in forms
-→ verify user is admin of class when generating
 → user registration page (unique usernames)
 → view personal feed (all assignments from all courses, limit 10)
+→ cascade delete all assignment interactions when deleting an assignment
+→ verification menu "are you sure" when deleting assignment
 
->> alpha 1.2.3 << - unrelease
+>> alpha 1.2.3 << - unreleased
+### Added
+→ Delete assignment for admins
+→ Formatting invite links
+→ Verifies user is admin when creating invite link
 
 >> alpha 1.2.2 << - [2020-01-12]
 ### Added

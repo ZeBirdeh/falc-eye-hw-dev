@@ -44,6 +44,13 @@ function createAssignment(classID, assignObj) {
   return addDoc;
 }
 
+// Delete an assignment
+function deleteAssignment(classID, assignID) {
+  let assignDoc = db.collection('classes').doc(classID).collection('assignments').doc(assignID);
+  let deleteDoc = assignDoc.delete();
+  return deleteDoc;
+}
+
 // Update completion if done
 function getAssignmentStatus(userID, classID, assignID) {
   let assignDoc = db.collection('classes').doc(classID).collection('assignments').doc(assignID);
@@ -107,6 +114,7 @@ function setAssignmentCompletion(userID, classID, assignID, completion) {
 module.exports = {
   getAllAssignments: getAllAssignments,
   createAssignment: createAssignment,
+  deleteAssignment: deleteAssignment,
   getAssignmentStatus: getAssignmentStatus,
   addAssignmentView: addAssignmentView,
   setAssignmentCompletion: setAssignmentCompletion

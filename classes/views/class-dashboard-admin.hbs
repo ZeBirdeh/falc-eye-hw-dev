@@ -4,17 +4,22 @@
 <script src="http://localhost:5005/static/js/class-admin.js"></script>
 {{/section}}
 <div class="dashboard" data-cid="{{classID}}">
+<p class="title">{{classObj.name}} - Admin Dashboard</p>
+<a href="/classes/{{classID}}/feed">Back to class feed</a>
 <ul>
   <li>
     <div class="all-padded">
+      <p class="heading">Invite links</p>
       <p>Send out invite link</p>
       <a class="btn invite-btn">Create Link</a>
-      <p><span id="invite-link"></span></p>
-      <p class="small">Expires: <span id="invite-expire"></span></p>
+      <div id="invite-links">
+        
+      </div>
     </div>
   </li>
   <li>
     <div class="all-padded">
+      <p class="heading">Class details</p>
       <a class="btn dropdown-trigger">Update class details</a>
       <div class="dropdown-details">
         <p>Group name</p>
@@ -27,7 +32,7 @@
   </li>
   <li>
     <div class="all-padded">
-      <p>Manage assignments</p>
+      <p class="heading">Manage assignments</p>
     <ul>
         {{#each assignments}}
         <li>
@@ -53,6 +58,7 @@
               {{/if}}
             </div>
           </div>
+          <div class="sm10-col"></div>
           <div class="sm15-col">
             <a class="btn delete-btn">Delete</a>
           </div>
@@ -63,3 +69,8 @@
   </li>
 </ul>
 </div>
+<script>
+document.getElementsByName("time").forEach(elt => {
+    elt.innerHTML = new Date(parseInt(elt.innerHTML)*1000).toLocaleString()
+  })
+</script>

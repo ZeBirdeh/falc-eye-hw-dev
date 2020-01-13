@@ -67,24 +67,72 @@ function init(app) {
     }).catch(err => { console.error(err); })
   })
 
+  app.post('/api/feed/delete-assignment', feedMiddleware, (req, res) => {
+    let username = req.user.data.username;
+    let classID = req.body.class;
+    let assignID = req.body.assign;
+    classDB.enrollStatus(username, classID).then(userStatus => {
+      if (!userStatus.admin) {
+        res.json({status: 'unauthorized'});
+        return;
+      }
+      assignDB.deleteAssignment(classID, assignID).then(() => {
+        console.log(`[LOG] assignment-api: Deleted assignment ${assignID}`)
+        res.json({status: 'success'})
+      }).catch(err => { console.error(err); })
+    });
+  })
+
+  // API call, get invite links
+  app.get('/api/:classid/get-invites', (req, res) => {
+    let username = req.user.data.username;
+    let classID = req.params.classid;
+    classDB.enrollStatus(username, classID).then(userStatus => {
+      if (!userStatus.admin) {
+        res.json({status: 'unauthorized'});
+        return;
+      }
+      classDB.getClassInvites(classID).then(invites => {
+        if (invites === null) {
+          res.json({status: 'error'});
+          return;
+        }
+        let validInvites = [];
+        let timeNow = Date.now() / 1000;
+        invites.forEach(invite => {
+          if (invite.expires > timeNow) {
+            validInvites.push(invite);
+          }
+        })
+        res.json({status: 'success', invites: validInvites});
+      })
+    });
+  })
   // API call, post to get valid token and add to invites database
   app.post('/api/:classid/new-invite', (req, res) => {
     // Check that user is an admin of the class of classID
+    let username = req.user.data.username;
     let classID = req.params.classid;
-    let expires = Math.floor(Date.now() / 1000) + parseInt(req.body.duration);
-    if (isNaN(expires)) { 
-      res.json({status: 'invalid'});
-      return;
-    }
-    new Promise(genToken).then(validToken => {
-      console.log('[LOG] assignment-api: Valid token generated')
-      classDB.addInviteLink(classID, expires, validToken).then(inviteDoc => {
-        console.log(`[LOG] get-classes: New invite link ${validToken} for ${classID}`);
-        res.json({status: 'success', token: validToken, expires: expires});
+    classDB.enrollStatus(username, classID).then(userStatus => {
+      if (!userStatus.admin) {
+        res.json({status: 'unauthorized'});
+        return;
+      }
+      let expires = Math.floor(Date.now() / 1000) + parseInt(req.body.duration);
+      if (isNaN(expires)) { 
+        res.json({status: 'invalid'});
+        return;
+      }
+      new Promise(genToken).then(validToken => {
+        console.log('[LOG] assignment-api: Valid token generated')
+        classDB.addInviteLink(classID, expires, validToken).then(inviteDoc => {
+          console.log(`[LOG] get-classes: New invite link ${validToken} for ${classID}`);
+          res.json({status: 'success', invite:{id: validToken, expires: expires}});
+        })
+      }).catch(err => {
+        console.error(err);
+        res.json({status: 'error'});
       })
-    }).catch(err => {
-      console.error(err);
-      res.json({status: 'error'});
     })
   })
 }

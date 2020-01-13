@@ -91,7 +91,7 @@ div {
   overflow-y: auto;
 }
 div.assignment {
-  width: 80%;
+  width: 75%;
   float: left;
   border: 1px solid black;
   border-radius: 5px;
@@ -227,7 +227,7 @@ input[type="range"] {
 
 /* Additional display settings */
 
-.hide { display: none; }
+.hide, .hidden { display: none; }
 
 a.disabled {
   background-image: none;

@@ -163,6 +163,24 @@ function getNumClassInvites(classID) {
   })
   return sizeProm;
 }
+function getClassInvites(classID) {
+  let inviteRef = db.collection('invites');
+  let sizeProm = inviteRef.where('class', '==', classID).get().then(snapshot => {
+    if (snapshot.empty) {
+      return [];
+    }
+    let invites = [];
+    snapshot.forEach(doc => {
+      let docData = doc.data();
+      docData.id = doc.id;
+      invites.push(docData);
+    });
+    return invites;
+  }).catch(err => {
+    console.error(err);
+  })
+  return sizeProm;
+}
 
 // Gets non-expired invites with specific
 function checkInviteUsed(token) {
@@ -226,6 +244,7 @@ module.exports = {
   enrollStatus: enrollStatus,
   checkInviteUsed: checkInviteUsed,
   getNumClassInvites: getNumClassInvites,
+  getClassInvites: getClassInvites,
   getInvite: getInvite,
   addInviteLink: addInviteLink
 }

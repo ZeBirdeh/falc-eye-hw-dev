@@ -10,6 +10,26 @@ function getInviteLink() {
   })
 }
 
+function getAllInvites() {
+  var classID = $('.dashboard').attr('data-cid');
+  var url = HOST + '/classes/api/'+classID+'/get-invites';
+  return new Promise((resolve, reject) => {
+    $.getJSON(url, {}, data => {
+      resolve(data)
+    })
+  })
+}
+
+function deleteAssignment(assignID) {
+  var classID = $('.dashboard').attr('data-cid');
+  var url = HOST + '/classes/api/feed/delete-assignment';
+  return new Promise((resolve, reject) => {
+    $.post(url, { class: classID, assign: assignID }, data => {
+      resolve(data)
+    })
+  })
+}
+
 function minimizeDetails() {
   var speed = 500;
   // Save heights to each section under data-fullheight and minimize
@@ -30,20 +50,57 @@ function minimizeDetails() {
   });
 }
 
+function addInviteText(invite) {
+  $linkDisplay = $('#invite-links');
+  var dateString = new Date(parseInt(invite.expires) * 1000).toLocaleString();
+  var displayText = '<p class="invite-link">'+HOST+'/classes/invite/'+invite.id+
+    ' <span class="small">Expires: '+dateString+'</span></p>';
+  $linkDisplay.append(displayText);
+}
+
 function setupInviteButton() {
   $('.invite-btn').on('click', function() {
     getInviteLink().then(result => {
       if (result.status == 'success') {
-        $('#invite-link').text(HOST+'/classes/invite/'+result.token);
-        $('#invite-expire').text(new Date(parseInt(result.expires)).toLocaleString());
+        addInviteText(result.invite);
       } else {
-        $('#invite-link').text('error: could not create link');
+        // Display error
       }
     });
+  })
+}
+
+function initializeInviteLinks() {
+  getAllInvites().then(result => {
+    if (result.status == 'success') {
+      result.invites.forEach(invite => {
+        addInviteText(invite);
+      })
+    } else {
+      // Display error
+    }
+  })
+}
+
+function setupDeleteButton() {
+  $('.delete-btn').on('click', function() {
+    var $this = $(this);
+    var assignID = $this.parent().prevAll('.assignment').attr('data-aid');
+    deleteAssignment(assignID).then(result => {
+      if (result.status == 'success') {
+        var $listItem = $this.parent().parent('li');
+        $listItem.animate({'opacity': 0}, 500);
+        setTimeout(function(){$listItem.remove()}, 500);
+      } else {
+        // Display error
+      }
+    })
   })
 }
 
 $(document).ready( function() {
   minimizeDetails();
   setupInviteButton();
+  initializeInviteLinks();
+  setupDeleteButton();
 })
