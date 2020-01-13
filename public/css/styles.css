@@ -99,6 +99,7 @@ div.assignment {
 }
 div.assignment[new-assign] {
   border: 1px solid #c41010;
+  background-color: #e8e8f8;
   font-style: oblique;
 }
 div.assignment[comp-assign] {
@@ -163,6 +164,28 @@ div.dropdown-details {
     width: 100%;
     margin-left: 0px;
   }
+}
+
+.confirm-overlay {
+  position: fixed;
+  width: 100%;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0,0,0,.85);
+  z-index: 1000;
+}
+.popup {
+  width: 50%;
+  position: absolute;
+  top: 15%;
+  left: 25%;
+  padding: 20px;
+  border: 1px solid black;
+  border-radius: 10px;
+  background: white;
+  z-index: 1001;
 }
 
 .all-padded { padding: 10px 10px 10px 10px; }

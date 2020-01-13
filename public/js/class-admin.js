@@ -86,15 +86,38 @@ function setupDeleteButton() {
   $('.delete-btn').on('click', function() {
     var $this = $(this);
     var assignID = $this.parent().prevAll('.assignment').attr('data-aid');
-    deleteAssignment(assignID).then(result => {
-      if (result.status == 'success') {
-        var $listItem = $this.parent().parent('li');
-        $listItem.animate({'opacity': 0}, 500);
-        setTimeout(function(){$listItem.remove()}, 500);
-      } else {
-        // Display error
-      }
-    })
+    var onConfirmFunction = () => {
+      deleteAssignment(assignID).then(result => {
+        if (result.status == 'success') {
+          var $listItem = $this.parent().parent('li');
+          $listItem.animate({'opacity': 0}, 500);
+          setTimeout(function(){$listItem.remove()}, 500);
+        } else {
+          // Display error
+        }
+      })
+    }
+    confirmPopup(onConfirmFunction);
+  })
+}
+
+function confirmPopup(onConfirm) {
+  var popup = '<div class="popup">\n'+
+    '<p class="heading">Are you sure you want to delete this assignment</p>\n'+
+    '<p id="assign-name"></p>\n'+
+    '<a class="btn cancel-btn">Cancel</a>'+
+    '<a class="btn confirm-btn">Confirm</a></div>'
+  var overlay = $('<div/>', {class: 'confirm-overlay'}).append(popup);
+  $('body').append(overlay);
+  $('.cancel-btn').on('click', function() {
+    $('.confirm-overlay').remove();
+  })
+  $('.confirm-overlay').on('click', function() {
+    $('.confirm-overlay').remove();
+  })
+  $('.confirm-btn').on('click', function() {
+    onConfirm();
+    $('.confirm-overlay').remove();
   })
 }
 

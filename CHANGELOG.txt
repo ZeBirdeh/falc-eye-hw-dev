@@ -12,11 +12,13 @@ See https://keepachangelog.com/en/0.3.0/
 → cascade delete all assignment interactions when deleting an assignment
 → verification menu "are you sure" when deleting assignment
 
->> alpha 1.2.3 << - unreleased
+>> alpha 1.2.3 << - [2020-01-13]
 ### Added
 → Delete assignment for admins
 → Formatting invite links
 → Verifies user is admin when creating invite link
+### Changed
+→ Various bug fixes (feed, create-assignment)
 
 >> alpha 1.2.2 << - [2020-01-12]
 ### Added

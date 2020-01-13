@@ -6,7 +6,7 @@ $(document).ready(function() {
     $output.text($(this).val());
   });
 
-  $('body').on('click', '[click-editable]', function( event ) {
+  $('assignment-form').on('click', '[click-editable]', function( event ) {
     var $this = $(this);
     var $input = $('<input class="num-input" pattern="[0-9]+" />').val($this.text());
     $input.attr('data-default', $this.text());
@@ -20,5 +20,10 @@ $(document).ready(function() {
       $output = $('#worknum');
     });
     $input.focus();
+  })
+
+  $('#duedate').val(Math.floor(Date.now() / 1000))
+  $('#submit-form').on('click', function() {
+    $('#form').submit();
   })
 });

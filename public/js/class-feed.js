@@ -38,7 +38,7 @@ function minimizeDetails() {
     $this.attr('data-fullheight', height+'px');
     $this.css('height', '0px');
   });
-  $('body').on('click', '.dropdown-trigger', function(e) {
+  $('.dropdown-trigger').on('click', function() {
     var $this = $(this)
     var $assignDiv = $this.parent()
     if ($assignDiv.attr('new-assign') === '') {
@@ -78,7 +78,7 @@ function setupRangeSlider($target) {
 }
 
 function setupUpdateButton() {
-  $('body').on('click', '.update-btn:not(.disabled)', function() {
+  $('.assignment').on('click', '.update-btn:not(.disabled)', function() {
     var $this = $(this);
     $this.addClass('disabled'); // Disable the button after clicked until slider moves
     var $rangeInput = $this.parent().prev().prev().children().first('.slider');
@@ -89,17 +89,18 @@ function setupUpdateButton() {
     setAssignmentCompletion(classID, assignID, rangeVal).then(status => {
       if (status.status == 'success') {
         createPopup('Update successful!');
+        var maxVal = $assignmentObj.attr('data-max');
+        $assignmentObj.find('.progress-disp').text(Math.round(rangeVal / 100 * maxVal) + ' / ');
         if (rangeVal >= 100) {
           $assignmentObj.attr('comp-assign', '');
           $rangeInput.attr('value', '100');
           // Remove the listener from the slider we are about to delete
-          $rangeInput.off()
-          var assignmentHTML = $assignmentObj.parent()[0].outerHTML;
+          //$rangeInput.off()
+          var $assignmentListItem = $assignmentObj.parent().detach();
           var $comp = $('.completed-assignments').children().first('ul');
-          $comp.prepend(assignmentHTML)
-          $assignmentObj.parent()[0].outerHTML = '';
+          $comp.prepend($assignmentListItem)
           // Since the slider is removed and replaced, we reset the listener
-          setupRangeSlider($comp.find('.slider').first());
+          //setupRangeSlider($comp.find('.slider').first());
         }
       } else {
         createPopup('Something went wrong. Please try again later.', true);
@@ -124,13 +125,11 @@ function formatCompletionOnLoad() {
       } else if (result.status == 'completed') { // Initialize values and move box, then reset sliders
         var maxVal = $this.attr('data-max');
         $this.attr('comp-assign', '');
-        $this.find('.slider').attr('value', '100').css('filter', 'hue-rotate(60deg)').off();
+        $this.find('.slider').attr('value', '100').css('filter', 'hue-rotate(60deg)');
         $this.find('.num-display').text(maxVal);
-        var assignmentHTML = $this.parent()[0].outerHTML;
+        var $assignmentListItem = $this.parent().detach();
         var $comp = $('.completed-assignments').children().first('ul');
-        $comp.prepend(assignmentHTML);
-        $this.parent()[0].outerHTML = '';
-        setupRangeSlider($comp.find('.slider').first());
+        $comp.prepend($assignmentListItem)
       } else {
         /* Some error happend with getting the status */
       }
