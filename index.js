@@ -24,9 +24,16 @@ const app = express();
 // Set the engine for viewing
 app.engine('hbs', hbs({
    extname: 'hbs',
+   helpers: {
+      section: function(name, options){
+          if(!this._sections) this._sections = {};
+          this._sections[name] = options.fn(this);
+          return null;
+      }
+   },
    defaultLayout: 'main'
 }));
-app.set('views', __dirname );
+app.set('views', path.join(__dirname, 'views') );
 app.set('view engine', 'hbs');
 
 // Middleware

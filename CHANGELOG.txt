@@ -7,10 +7,20 @@ See https://keepachangelog.com/en/0.3.0/
 → Change deserializeUser to use separate database, such as Redis
 → Add section for hidden and past assignments
 → Set maximum length for description in forms
-→ user registration page (unique usernames)
+→ write an about and home page
+→ 200px + 40% for center bar 30% - 100px for sides
+→ Look for fonts (Segoe UI)
+→ implement mailer functionality for registration
+→ Update formatting for assignment and class creation
 → view personal feed (all assignments from all courses, limit 10)
 → cascade delete all assignment interactions when deleting an assignment
-→ verification menu "are you sure" when deleting assignment
+
+>> alpha 1.2.4 << - [2020-01-14]
+### Added
+→ User registration feature
+### Changed
+→ Slight file location changes
+→ UI and CSS updates
 
 >> alpha 1.2.3 << - [2020-01-13]
 ### Added

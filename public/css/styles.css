@@ -9,9 +9,19 @@ body {
 }
 input {
   width: 100%;
+  height: 36px;
+  font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  font-size: 15px;
+  margin: 10px 0px 10px 0px;
+  padding: 0px 10px 0px 10px;
+  box-shadow: 0px 0px 3px 0px #eee inset;
+  border: 1px solid #ddd;
+  border-radius: 5px;
 }
 input:focus, textarea:focus {
   outline: none;
+  box-shadow: 0px 0px 0px 3px rgba(0,96,255,0.2), 0px 0px 3px 0px #eee inset;
+  border: 1px solid #6cbbf7;
 }
 input.num-input {
   width: 60px;
@@ -80,8 +90,12 @@ div {
 
 /* Vertical grid classes */
 
-.large-col { float: left; min-height: 1px; width: 75%; }
-.small-col { float: left; min-height: 1px; width: 25%; }
+.large-col, .lg75-col { float: left; min-height: 1px; width: 75%; }
+.med-col, .md50-col { float: left; min-height: 1px; width: 50%; }
+.md35-col { float: left; min-height: 1px; width: 35%; }
+.md30-col { float: left; min-height: 1px; width: 30%; }
+.small-col, .sm25-col { float: left; min-height: 1px; width: 25%; }
+.sm20-col { float: left; min-height: 1px; width: 20%; }
 .sm15-col { float: left; min-height: 1px; width: 15%; }
 .sm10-col { float: left; min-height: 1px; width: 10%; }
 
@@ -187,6 +201,20 @@ div.dropdown-details {
   background: white;
   z-index: 1001;
 }
+
+.error-notice {
+  width: 75%;
+  display: block;
+  float: left;
+  border: 2px solid #e65e5e;
+  border-radius: 10px;
+  background-color: #ffd0d0;
+  padding: 20px;
+  font-size: 18px;
+  font-weight: bold;
+}
+
+/* Spacing */
 
 .all-padded { padding: 10px 10px 10px 10px; }
 .ew-padded { padding: 0px 10px 0px 10px; }

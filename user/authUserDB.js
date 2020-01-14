@@ -1,4 +1,5 @@
 const admin = require('firebase-admin');
+const bcrypt = require('bcrypt');
 var db = admin.firestore();
 
 function getUsers(username) {
@@ -6,7 +7,7 @@ function getUsers(username) {
     var getDoc = userRef.where('username', '==', username).get().then(snapshot => {
         if (snapshot.empty) {
             console.log('No matching users.');
-            return {};
+            return;
         }
 
         var users = [];
@@ -18,7 +19,7 @@ function getUsers(username) {
         return users[0];
     }).catch(err => {
         console.log('Error getting documents', err);
-        return {};
+        return;
     });
     return getDoc;
 }
@@ -38,7 +39,29 @@ function getUserById(id) {
     return getDoc;
 }
 
+function createUser(username, pass, email, ipaddr, createTime) {
+    var userRef = db.collection('users');
+    return new Promise((resolve, reject) => {
+        bcrypt.hash(pass, 12, function(err, hash) {
+            if (err) {
+                resolve(null);
+            }
+            var aDoc = userRef.add({
+                username: username,
+                password: hash,
+                email: email,
+                ip_addr: ipaddr,
+                created: createTime,
+                ban_until: 0,
+                reports: 0
+            })
+            resolve(aDoc);
+        });
+    });
+}
+
 module.exports = {
     getUsers: getUsers,
-    getUserById: getUserById
+    getUserById: getUserById,
+    createUser: createUser
 }
