@@ -116,25 +116,6 @@ function init(app) {
     });
   })
 
-  // Generating password reset token
-  /*
-  app.post('/resetPassword', authMiddleware(), (req, res) => {
-    let classID = req.params.classid;
-    let classObj = res.locals.classObj;
-    let SECURE_SECRET = 'CYTm6WvWTR16J2JEjZj9SrQOggbd9ULP';
-    let expires = Math.floor(Date.now() / 1000) + 3600;
-    let combined_string = classID + '.' + expires;
-    bcrypt.hash(combined_string, 12, function(err, hash) {
-      if (err) {
-        res.json({ status: 'error' })
-        return;
-      }
-      let linkToken = Buffer.from(combined_string).toString('base64') + '.' + hash;
-      res.json( { status: 'success', token: linkToken } )
-    });
-  })
-  */
-
   // Following invite link to enroll in class
   app.get('/invite/:inviteToken', (req, res) => {
     let inviteToken = req.params.inviteToken;

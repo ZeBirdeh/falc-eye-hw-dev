@@ -17,6 +17,7 @@ input {
   box-shadow: 0px 0px 3px 0px #eee inset;
   border: 1px solid #ddd;
   border-radius: 5px;
+  box-sizing: border-box;
 }
 input:focus, textarea:focus {
   outline: none;
@@ -90,8 +91,10 @@ div {
 
 /* Vertical grid classes */
 
+.lg80-col { float: left; min-height: 1px; width: 80%; }
 .large-col, .lg75-col { float: left; min-height: 1px; width: 75%; }
 .med-col, .md50-col { float: left; min-height: 1px; width: 50%; }
+.md40-col { float: left; min-height: 1px; width: 40%; }
 .md35-col { float: left; min-height: 1px; width: 35%; }
 .md30-col { float: left; min-height: 1px; width: 30%; }
 .small-col, .sm25-col { float: left; min-height: 1px; width: 25%; }
@@ -143,7 +146,7 @@ div.dropdown-details {
   padding: 15px 15px 15px 15px;
   font-size: 16px;
   text-decoration: none;
-  color: white;
+  color: rgb(169, 255, 226);
   text-align: center;
   transition: background-color 0.4s;
 }
@@ -178,6 +181,10 @@ div.dropdown-details {
     width: 100%;
     margin-left: 0px;
   }
+}
+.content-full {
+  margin-top: 48px;
+  width: 100%;
 }
 
 .confirm-overlay {
@@ -214,6 +221,18 @@ div.dropdown-details {
   font-weight: bold;
 }
 
+.welcome-bar {
+  width: 100%;
+  display: block;
+  background-color: #383840;
+  color: #ddd;
+  overflow-y: auto;
+}
+.welcome-bar .title, .welcome-bar .xlg-title {
+  color: rgb(169, 255, 226);
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
 /* Spacing */
 
 .all-padded { padding: 10px 10px 10px 10px; }
@@ -235,8 +254,14 @@ input[type="range"] {
   border: 2px solid white;
   border-radius: 10px;
   width: 100%;
+  padding: 0;
   margin: 0px 50px 0px 0px;
   transition: box-shadow 0.2s ease-in-out;
+}
+input[type="range"]:focus {
+  outline: none;
+  box-shadow: none;
+  border: 2px solid white;
 }
 @media screen and (-webkit-min-device-pixel-ratio:0) {
   input[type="range"] {
@@ -260,7 +285,7 @@ input[type="range"] {
     cursor: ew-resize;
     background: #ffc13b;
     box-shadow: -500px 0 0 490px #ffc13b, inset 0 0 0 15px #ffc13b;
-    border-radius: 8px;
+    border-radius: 10px;
     transition-property: box-shadow, background-color;
     transition-duration: 0.2s, 0s;
     transition-timing-function: ease-in-out;
@@ -323,6 +348,13 @@ p.num-display {
 .load {
   font-weight: bold;
 }
+.xlg-title {
+  font-size: 64px;
+  font-weight: 600;
+}
+.centered {
+  text-align: center;
+}
 
 /* Other image/graphic formatting */
 .triangle-down {
@@ -330,7 +362,7 @@ p.num-display {
 	height: 3px;
 	border-left: 5px solid transparent;
 	border-right: 5px solid transparent;
-  border-top: 5px solid white;
+  border-top: 5px solid rgb(169, 255, 226);
   display: inline-block;
 }
 .menu-icon {
@@ -341,5 +373,5 @@ p.num-display {
   width: 16px;
   height: 2px;
   margin: 3px 0px 0px 0px;
-  background-color: white;
+  background-color: rgb(169, 255, 226);
 }

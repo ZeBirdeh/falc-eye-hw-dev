@@ -4,10 +4,22 @@
 <div class="small-col"></div>
 <div class="med-col login-form all-padded">
 <h3>Log in</h3>
-
+<p class="hidden error-notice" id="errormessage"></p>
 <form action="/login" method="post">
   <input name="username" id="username" type="text" placeholder="Your username" />
   <input name="password" id="password" type="password" placeholder="Your password"/>
   <input type="submit" />
 </form>
 </div>
+
+<script>
+  var query = window.location.search.substring(1);
+  var queryObj = {}
+  var getVars = query.split("&").forEach(queryVal => {
+    var kvPair = queryVal.split("=");
+    queryObj[kvPair[0]] = kvPair[1];
+  })
+  var errnum = queryObj['e'];
+  if (errnum == 1) { $('#errormessage').text("Invalid input.") }
+  if (errnum) { $('#errormessage').removeClass('hidden')}
+</script>

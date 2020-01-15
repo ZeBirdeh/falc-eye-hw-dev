@@ -53,15 +53,35 @@ function createUser(username, pass, email, ipaddr, createTime) {
                 ip_addr: ipaddr,
                 created: createTime,
                 ban_until: 0,
-                reports: 0
+                reports: 0,
+                verified: false
             })
             resolve(aDoc);
         });
     });
 }
 
+function verifyUser(username) {
+    let userRef = db.collection('users');
+    let updateDoc = userRef.where('username', '==', username).get().then(snapshot => {
+        if (snapshot.empty) {
+            console.log('No matching users.');
+            return;
+        }
+
+        var users = [];
+        snapshot.forEach(doc => {
+            console.log(`[LOG] authUserDB: Verified user ${username}`);
+            users.push(userRef.doc(doc.id).update({ verified: true }));
+        });
+        return users;
+    })
+    return updateDoc;
+}
+
 module.exports = {
     getUsers: getUsers,
     getUserById: getUserById,
-    createUser: createUser
+    createUser: createUser,
+    verifyUser: verifyUser
 }

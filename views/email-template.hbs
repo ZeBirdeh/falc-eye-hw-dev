@@ -1,0 +1,52 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "https://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="https://www.w3.org/1999/xhtml">
+<head>
+<title>Falkai Email Verification</title>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0 " />
+<style>
+  .box {
+    width:60%;
+    margin:50px 20% 0px 20%;
+    padding:0;
+    border:1px solid #888;
+    border-radius: 10px;
+    background-color: white;
+    font-family:Helvetica, sans-serif;
+    font-size: 15px;
+    color:black;
+  }
+  .box p {
+    margin: 0px 0px 10px 0px;
+  }
+  .all-padded { padding: 10px; }
+  .heading {
+    width: 100%;
+    background-color:rgb(169, 255, 226);
+    border-radius: 10px 10px 0px 0px;
+    padding: 30px 0px 30px 0px;
+    text-align: center;
+    margin: 0;
+    font-size: 24px;
+    font-family:Helvetica, sans-serif;
+  }
+  .tiny {
+    font-size: 9px;
+    color: #888;
+  }
+</style>
+</head>
+<body>
+  <div class="box">
+  <p class="heading">Hello {{username}}</p>
+  <div class="all-padded">
+  <p>Thank you for signing up for an account on Falkai!</p>
+  <p>Before you can access your account and our services, please verify that you are the account owner of the email address entered.</p>
+  <p>If you created an account, click the link below, or copy it into the URL bar.</p>
+  <a href="{{verifyURL}}">{{verifyURL}}</a>
+  <p>If you did not sign up for an account, please disregard this email.</p>
+  <p class="tiny">This email was sent automatically by Falkai. Contact falkai.app@gmail.com for any inquiries.</p>
+  </div>
+  </div>
+</body>

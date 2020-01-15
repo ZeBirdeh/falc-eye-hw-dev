@@ -1,13 +1,26 @@
 const passport = require('passport');
 const bcrypt = require('bcrypt');
+const crypto = require('crypto');
 const LocalStrategy = require('passport-local').Strategy;
 const authUserDB = require('./authUserDB.js');
+const nodemailer = require('nodemailer');
+const {google} = require('googleapis');
 const session = require('express-session');
 const cookieParser = require('cookie-parser');
 const memoryStore = require('./memory-store-db.js');
 
+const apiAccount = require('../../falc-eye-hw-google-api-u5kt7grp.json');
 const LOGIN_REDIRECT = '/profile';
+const SECRET_KEY = 'CYTm6WvWTR16J2JEjZj9SrQOggbd9ULP';
+const HOST = 'http://localhost:5005'
 
+const OAuth2 = google.auth.OAuth2;
+const oauth2Client = new OAuth2(
+  apiAccount.client_id,
+  apiAccount.client_secret,
+  apiAccount.redirect_url
+);
+oauth2Client.setCredentials({ refresh_token: apiAccount.refresh_token })
 // The code to authenticate a user by comparing a given username-password combination
 function initPassport() {
   console.log("Passport initialized");
@@ -30,6 +43,9 @@ function initPassport() {
       authUserDB.getUsers(username).then(doc => {
         var docData = doc.data();
         if (!docData) {
+          return done(null, false);
+        }
+        if (!docData.verified) {
           return done(null, false);
         }
 
@@ -55,7 +71,7 @@ function initPassport() {
 }
 
 function initUser(app) {
-  app.post('/login', passport.authenticate('local', { failureRedirect: '/login' }),
+  app.post('/login', passport.authenticate('local', { failureRedirect: '/login?e=1' }),
   function(req, res) {
     req.session.user = req.session.passport.user;
     req.session.save(function(err) {
@@ -89,7 +105,8 @@ function initUser(app) {
           res.redirect('/register?e=2');
           return;
         }
-        res.redirect('/login');
+        sendVerificationEmail(email, username, app);
+        res.redirect('/guide');
       })
     })
   })
@@ -98,6 +115,35 @@ function initUser(app) {
     res.render('register');
   })
 
+  app.get('/verify', (req, res) => {
+    let token = req.query.token;
+    if (!token) {
+      // Bad verification
+      res.redirect('/');
+      return;
+    }
+    let userOpt = verifyEmailToken(token);
+    if (userOpt) {
+      authUserDB.verifyUser(userOpt).then(updates => {
+        res.redirect('/login');
+      })
+    } else {
+      // Bad verification
+      res.redirect('/');
+    }
+  });
+
+  app.get('/guide', (req, res) => {
+    res.render('guide');
+  })
+
+  app.get('/emailtest', (req, res) => {
+    sendVerificationEmail('finnyfloon.daniel@gmail.com','feeshes',app).then(emailResponse => {
+      res.send(emailResponse);
+    }).catch(err => {
+      res.send(err)
+    })
+  })
   /*
   app.get('/secure', (req, res) => {
     res.send(req.session);
@@ -119,6 +165,75 @@ function init(app) {
 function isEmailFormat(email) {
   var matchesEmail = /^[a-zA-Z0-9!#$%&'*+/=?^_`{|}~\.-]+@[a-zA-Z0-9\.-]+/.test(email);
   return matchesEmail;
+}
+
+// Takes in app as parameter to use the handlebars render function
+function sendVerificationEmail(email, username, app) {
+  const accessToken = oauth2Client.getAccessToken();
+  var transport = nodemailer.createTransport({
+    service: 'gmail',
+    auth: {
+      type: 'OAuth2',
+      user: 'falkai.app@gmail.com',
+      clientId: apiAccount.client_id,
+      clientSecret: apiAccount.client_secret,
+      refreshToken: apiAccount.refresh_token,
+      accessToken: accessToken
+    }
+  });
+  const verifyURL = HOST + '/verify?token=' + createEmailVerificationToken(username);
+  return new Promise((resolve, reject) => {
+    app.render('email-template', {
+      layout: 'empty',
+      username: username,
+      verifyURL: verifyURL
+    }, (err, emailContent) => {
+      var mailOptions = {
+        from: 'falkai.app@gmail.com',
+        to: email,
+        subject: 'Finish your Falkai registration',
+        html: emailContent
+      };
+      transport.sendMail(mailOptions, function(err, info) {
+        if (err) {
+          console.error(err);
+          reject(err);
+        } else {
+          console.log('Email sent: ' + info.response);
+          resolve(info.response);
+        }
+      })
+    });
+  });
+}
+
+function createEmailVerificationToken(username) {
+  let expires = Math.floor(Date.now() / 1000) + 3600;
+  let combined_string = username + '.' + expires;
+  const hmac = crypto.createHmac('sha256', SECRET_KEY);
+  hmac.update(combined_string);
+  let hash = hmac.digest('hex');
+  let linkToken = Buffer.from(combined_string).toString('hex') + '-' + hash;
+  return linkToken;
+}
+
+function verifyEmailToken(token) {
+  let tokenData = Buffer.from(token.split('-')[0], 'hex').toString('utf8');
+  let tokenHash = token.split('-')[1]
+  const hmac = crypto.createHmac('sha256', SECRET_KEY);
+  hmac.update(tokenData);
+  let hash = hmac.digest('hex');
+  if (!(tokenHash === hash)) {
+    console.log(`[LOG] user/init.js: Email verification failed ${tokenData}`)
+    return false;
+  }
+  let username = tokenData.split('.')[0];
+  let expires = tokenData.split('.')[1];
+  if (Date.now() / 1000 > expires) {
+    console.log(`[LOG] user/init.js: Expired email verification ${tokenData}`);
+    return false;
+  }
+  return username;
 }
 
 module.exports = {

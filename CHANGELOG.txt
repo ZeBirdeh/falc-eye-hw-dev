@@ -19,7 +19,7 @@ See https://keepachangelog.com/en/0.3.0/
 ### Added
 → User registration feature
 ### Changed
-→ Slight file location changes
+→ Slight views file location changes
 → UI and CSS updates
 
 >> alpha 1.2.3 << - [2020-01-13]
