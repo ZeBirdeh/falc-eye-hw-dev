@@ -26,12 +26,12 @@ function initPassport() {
   console.log("Passport initialized");
   // Serialize and deserialize user to store information for sessions
   passport.serializeUser(function(userdoc, done) {
-    console.log(`Serialized user with id ${userdoc.id}`);
+    //console.log(`Serialized user with id ${userdoc.id}`);
     done(null, userdoc.id);
   });
 
   passport.deserializeUser(function(userid, done) {
-    console.log(`Deserialized user with id ${userid}`);
+    //console.log(`Deserialized user with id ${userid}`);
     //authUserDB.getUserById(userid).then(doc => {
     //    done(null, doc);
     //  });
@@ -76,7 +76,16 @@ function initUser(app) {
     req.session.user = req.session.passport.user;
     req.session.save(function(err) {
       // session saved
-      res.redirect(LOGIN_REDIRECT);
+      if (req.body.redirect) {
+        let redirectURL = Buffer.from(req.body.redirect, 'hex').toString('utf8');
+        if (/^(\/[a-zA-Z0-9-]*)+$/.test(redirectURL)) {
+          res.redirect(redirectURL);
+        } else {
+          res.redirect(LOGIN_REDIRECT);
+        }
+      } else {
+        res.redirect(LOGIN_REDIRECT);
+      }
     });
   });
 

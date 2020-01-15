@@ -139,7 +139,7 @@ function init(app) {
       })
     } else {
       // Prompt user to log in
-      let redirectStr = Buffer.from(req.url).toString('hex');
+      let redirectStr = Buffer.from('/classes'+req.url).toString('hex');
       res.redirect('/login?redirect='+redirectStr);
     }
   });

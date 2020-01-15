@@ -19,9 +19,6 @@ input, textarea {
   border-radius: 5px;
   box-sizing: border-box;
 }
-textarea {
-  padding: 10px;
-}
 input:focus, textarea:focus {
   outline: none;
   box-shadow: 0px 0px 0px 3px rgba(0,96,255,0.2), 0px 0px 3px 0px #eee inset;
@@ -37,11 +34,11 @@ input.num-input {
 input.num-input:invalid {
   border: 2px solid red;
 }
-
 textarea {
   resize: none;
   font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
   font-size: 15px;
+  padding: 10px;
 }
 
 /* a tag buttons */
@@ -247,6 +244,14 @@ div.dropdown-details {
 .welcome-bar .title, .welcome-bar .xlg-title {
   color: rgb(169, 255, 226);
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+a.submit-btn {
+  width: 100%;
+  box-sizing: border-box;
+  margin: 10px 0px 10px 0px;
+  border-radius: 5px;
+  height: 36px;
 }
 
 /* Spacing */

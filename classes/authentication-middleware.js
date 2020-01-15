@@ -2,7 +2,7 @@
 function authenticationMiddleware() {
     return function(req, res, next) {
         if (req.isAuthenticated()) {
-            console.log(`Authenticated ${req.user.data.username}`);
+            //console.log(`Authenticated ${req.user.data.username}`);
             return next(); // Return so the rest of the function isn't called
         }
         console.log(`Failed to authenticate`);

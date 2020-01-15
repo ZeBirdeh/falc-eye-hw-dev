@@ -1,14 +1,16 @@
 {{#section 'head'}}
 <title>Log in</title>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
 {{/section}}
 <div class="small-col"></div>
 <div class="med-col login-form all-padded">
 <h3>Log in</h3>
 <p class="hidden error-notice" id="errormessage"></p>
-<form action="/login" method="post">
+<form id="form" method="post">
   <input name="username" id="username" type="text" placeholder="Your username" />
   <input name="password" id="password" type="password" placeholder="Your password"/>
-  <input type="submit" />
+  <input name="redirect" id="redirect" type="hidden" />
+  <a class="btn submit-btn" id="submit-form">Submit</a>
 </form>
 </div>
 
@@ -22,4 +24,11 @@
   var errnum = queryObj['e'];
   if (errnum == 1) { $('#errormessage').text("Invalid input.") }
   if (errnum) { $('#errormessage').removeClass('hidden')}
+  var redirectStr = queryObj['redirect'];
+  $(document).ready(function() {
+    $('#submit-form').on('click', function() {
+      $('#form').submit();
+    })
+    $('#redirect').val(redirectStr);
+  })
 </script>
