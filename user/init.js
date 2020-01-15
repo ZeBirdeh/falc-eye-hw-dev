@@ -81,8 +81,11 @@ function initUser(app) {
   });
 
   app.get('/login', (req, res) => {
-    console.log("Login form");
-    res.render('login');
+    if (req.isAuthenticated()) {
+      req.redirect('/profile');
+    } else {
+      res.render('login');
+    }
   });
 
   app.post('/register', (req, res) => {
