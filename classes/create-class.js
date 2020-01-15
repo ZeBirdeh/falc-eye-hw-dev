@@ -12,16 +12,23 @@ function init(app) {
     let className = req.body.name;
     let classDesc = req.body.description;
     let classSchool = req.body.school;
+    if (!className || !classDesc || !classSchool) {
+      console.log('[LOG] create-class: Invalid input given');
+      res.redirect('/classes/form/new?e=1')
+    }
+    if ((classDesc.length > 2000) || (className.length > 200)) {
+      console.log('[LOG] create-class: Invalid input given');
+      res.redirect('/classes/form/new?e=1');
+      return;
+    }
     let classObj = {name: className, description: classDesc, school: classSchool};
-    let classRef = classDB.createClass(classObj)
-    classRef.then(ref => {
+    classDB.createClass(classObj).then(ref => {
       if (ref === null) {
         console.log('[LOG] create-class: Invalid input given');
         res.redirect('/classes/form/new?e=1');
       } else {
         console.log('[LOG] create-class: Added document with ID ', ref.id);
         classDB.enrollStudent(req.user.data.username, ref.id, true).then(enrollRef => {
-          console.log(`[LOG] create-class: Set ${req.user.data.username} as admin of ${ref.id}`);
           res.redirect('/classes/' + ref.id + '/home');
         });
       }

@@ -17,7 +17,7 @@ const passport = require('passport');
 const session = require('express-session');
 const path = require('path');
 const authentication = require('./user');
-authentication.init.initPassport();
+authentication.initPassport();
 
 const app = express();
 
@@ -45,17 +45,19 @@ app.use(bodyParser.urlencoded({
 app.use('/static', express.static(path.join(__dirname, 'public')))
 
 // Initialize cookies and session
-authentication.init.init(app);
+authentication.initSession(app);
 
 // Initializing different parts of the app
-require('./user-pages').init(app);
-//require('./classes').init(app);
 // Classes section is now its own app
 const classesApp = require('./classes')
 app.use('/classes', classesApp);
-authentication.init.initUser(app);
+authentication.init(app);
 
-app.get('/', function(req, res){
+app.get('/', (req, res) => {
+   res.render('guide');
+})
+/*
+app.get('/session-test', function(req, res){
    if(req.session.page_views){
       req.session.page_views++;
       res.send("You visited this page " + req.session.page_views + " times");
@@ -64,6 +66,7 @@ app.get('/', function(req, res){
       res.send("Welcome to this page for the first time!");
    }
 });
+*/
 
 app.listen(5005, function(){
   console.log('Express server listening on port 5005');

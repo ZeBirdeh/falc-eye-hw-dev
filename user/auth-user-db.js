@@ -79,9 +79,50 @@ function verifyUser(username) {
     return updateDoc;
 }
 
+// Take in a user and return all the classes they belong to
+// The output is an object whose value for "class" is the array of classes
+// { classes: [ {id: string, data: Object} ] }
+function getClasses(username) {
+    var userRef = db.collection('class-enrollment');
+    var getDoc = userRef.where('username', '==', username).get().then(snapshot => {
+      if (snapshot.empty) {
+        console.log('[LOG] user-db: No enrolled classes');
+        return {classes: []};
+      }
+  
+      // Produce an array of promises to chain together in order to return only
+      // after all data from each document in the snapshot is pushed to an array
+      var dataGetPromises = []
+      snapshot.forEach(doc => {
+        var docData = doc.data();
+        if (docData.class) {
+          dataGetPromises.push(docData.class.get());
+        }
+      });
+      // Resolve all the promises, then take the querysnapshots and add all of the data
+      // to the list, then finally return the data list
+      var userClasses = [];
+      var resultsPromise = Promise.all(dataGetPromises).then(promiseResults => {
+        promiseResults.forEach(classesDoc => {
+          // classesDoc is a class document, return object with id and its data
+          console.log(`[LOG] user-db: Found class ${classesDoc.data().name}`);
+          userClasses.push({id: classesDoc.id, data: classesDoc.data()});
+        });
+        return {classes: userClasses};
+      })
+      return resultsPromise;
+    }).catch(err => {
+      console.log('[WARN] user-db: Error getting documents', err);
+      return null;
+    });
+    return getDoc;
+  }
+  
+
 module.exports = {
     getUsers: getUsers,
     getUserById: getUserById,
     createUser: createUser,
-    verifyUser: verifyUser
+    verifyUser: verifyUser,
+    getClasses: getClasses
 }

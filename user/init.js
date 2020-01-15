@@ -2,7 +2,7 @@ const passport = require('passport');
 const bcrypt = require('bcrypt');
 const crypto = require('crypto');
 const LocalStrategy = require('passport-local').Strategy;
-const authUserDB = require('./authUserDB.js');
+const authUserDB = require('./auth-user-db.js');
 const nodemailer = require('nodemailer');
 const {google} = require('googleapis');
 const session = require('express-session');
@@ -82,7 +82,7 @@ function initUser(app) {
 
   app.get('/login', (req, res) => {
     if (req.isAuthenticated()) {
-      req.redirect('/profile');
+      res.redirect(LOGIN_REDIRECT);
     } else {
       res.render('login');
     }
@@ -117,6 +117,11 @@ function initUser(app) {
   app.get('/register', (req, res) => {
     res.render('register');
   })
+  
+  app.get('/logout', function(req, res){
+    req.logout();
+    res.redirect('/');
+  });
 
   app.get('/verify', (req, res) => {
     let token = req.query.token;
@@ -139,18 +144,6 @@ function initUser(app) {
   app.get('/guide', (req, res) => {
     res.render('guide');
   })
-
-  app.get('/emailtest', (req, res) => {
-    sendVerificationEmail('finnyfloon.daniel@gmail.com','feeshes',app).then(emailResponse => {
-      res.send(emailResponse);
-    }).catch(err => {
-      res.send(err)
-    })
-  })
-  /*
-  app.get('/secure', (req, res) => {
-    res.send(req.session);
-  });*/
 }
 
 function init(app) {
@@ -163,6 +156,11 @@ function init(app) {
   }));
   app.use(passport.initialize());
   app.use(passport.session());
+  // Put auth status in locals object
+  app.use((req, res, next) => {
+    res.locals.isAuthenticated = req.isAuthenticated();
+    next();
+  })
 }
 
 function isEmailFormat(email) {

@@ -32,6 +32,12 @@ function init(app) {
         res.redirect('/classes/' + classID + '/item/new?e=1');
         return;
       }
+      if ((req.body.description.length > 2000) || (req.body.title.length > 200)
+        || (req.body.duedate < (Date.now() / 1000)) || (req.body.workload < 0) || (req.body.workload > 100)) {
+        console.log('[LOG] create-assignment: Invalid input given');
+        res.redirect('/classes/' + classID + '/item/new?e=1');
+        return;
+      }
       let assignObj = {
         title: req.body.title,
         description: req.body.description,

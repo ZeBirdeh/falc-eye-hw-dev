@@ -2,18 +2,27 @@ Notation used:
 added/changed/deprecated/removed/fixed/security
 See https://keepachangelog.com/en/0.3.0/
 
-### TODO
-→ Fix URI parse error with % in parameter
-→ Change deserializeUser to use separate database, such as Redis
-→ Add section for hidden and past assignments
+### TODO High Priority
 → Set maximum length for description in forms
 → write an about and home page
-→ 200px + 40% for center bar 30% - 100px for sides
-→ Look for fonts (Segoe UI)
-→ implement mailer functionality for registration
 → Update formatting for assignment and class creation
+→ User management in class admin section
+### TODO Low Priority
+→ class assignments (shared progress)
+→ Fix URI parse error with % in parameter
+→ 200px + 40% for center bar 30% - 100px for sides
+→ Add section for hidden and past assignments
 → view personal feed (all assignments from all courses, limit 10)
 → cascade delete all assignment interactions when deleting an assignment
+→ Change deserializeUser to use separate database, such as Redis
+
+>> alpha 1.3.0 << - [2020-01-15]
+### Added
+→ User registration verification email
+→ New user guide page
+### Changed
+→ File location changes
+→ Interface updates
 
 >> alpha 1.2.4 << - [2020-01-14]
 ### Added

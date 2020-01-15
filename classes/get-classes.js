@@ -64,6 +64,7 @@ function init(app) {
       // Show additional menus if authorized
       classDB.enrollStatus(req.user.data.username, classID).then(userStatus => {
         classObj.userStatus = userStatus;
+        classObj.classID = classID;
         res.render('class-homepage-auth', classObj);
       });
     } else {
@@ -72,30 +73,25 @@ function init(app) {
   });
   
   // List all assignments for a specific class
-  app.get('/:classid/feed', (req, res) => {
+  app.get('/:classid/feed', authMiddleware(), (req, res) => {
     let classID = req.params.classid;
     // Class ID must be non-empty and alphanumeric
-    if (req.isAuthenticated()) {
-      let classObj = res.locals.classObj;
-      classDB.enrollStatus(req.user.data.username, classID).then(userStatus => {
-        classObj.userStatus = userStatus;
-        if (userStatus.enrolled) {
-          assignDB.getAllAssignments(classID).then(assignObj => {
-            assignObj.classObj = classObj;
-            assignObj.classID = req.params.classid;
-            assignObj.assignments.forEach(tempAssign => {
-              tempAssign.isAuthor = (tempAssign.author == req.user.id);
-            })
-            res.render('class-feed', assignObj);
+    let classObj = res.locals.classObj;
+    classDB.enrollStatus(req.user.data.username, classID).then(userStatus => {
+      classObj.userStatus = userStatus;
+      if (userStatus.enrolled) {
+        assignDB.getAllAssignments(classID).then(assignObj => {
+          assignObj.classObj = classObj;
+          assignObj.classID = req.params.classid;
+          assignObj.assignments.forEach(tempAssign => {
+            tempAssign.isAuthor = (tempAssign.author == req.user.id);
           })
-        } else {
-          res.render('no-auth', classObj);
-        }
-      });
-    } else {
-      // If not logged in redirect
-      res.redirect('/login');
-    }
+          res.render('class-feed', assignObj);
+        })
+      } else {
+        res.render('no-auth', classObj);
+      }
+    });
   });
 
   // Settings for admins

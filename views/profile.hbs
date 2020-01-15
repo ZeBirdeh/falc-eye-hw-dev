@@ -1,0 +1,30 @@
+{{#section 'head'}}
+  <title>Profile</title>
+{{/section}}
+<div class="sm10-col"></div>
+<div class="md30-col ns-padded">
+  <p class="title">Profile Info</p>
+  <p>Username: {{userData.username}}</p>
+  <p class="small">Account created on <span name="time">{{userData.created}}</span></p>
+</div>
+<div class="med-col ns-padded">
+  <p class="heading">My classes</p>
+  {{#if hasClasses}}
+  <ul>
+    {{#each classes}}
+    <li><a href="/classes/{{id}}/home">{{data.name}}</a></li>
+    <li>{{data.description}}</li>
+    {{/each}}
+  </ul>
+  {{else}}
+  <p>You aren't part of any classes!</p>
+  <p><a href="/classes/form/new">Create a new class</a> or join one through an invite link.</p>
+  {{/if}}
+</div>
+<div class="sm10-col"></div>
+
+<script>
+  document.getElementsByName("time").forEach(elt => {
+    elt.innerHTML = new Date(parseInt(elt.innerHTML)*1000).toLocaleString()
+  })
+</script>

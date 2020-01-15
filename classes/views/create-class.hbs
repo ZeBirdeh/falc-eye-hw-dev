@@ -1,11 +1,19 @@
 {{#section 'head'}}
 <title>Create new class - Falkai</title>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+<script src="http://localhost:5005/static/js/create-class-jquery.js"></script>
 {{/section}}
-<h3>Create new class</h3>
-
-<form action="/classes/form/create" method="post">
-  <input name="name" id="name" type="text" placeholder="Title" />
-  <textarea class="large-input" name="description" id="description" type="text" placeholder="Type a short description here"></textarea>
-  <input name="school" id="school" type="text" placeholder="Organization name"/>
-  <input type="submit" />
-</form>
+<div class="content-full">
+  <div class="sm10-col"></div>
+  <div class="lg80-col ns-padded">
+    <p class="title">Create new class</p>
+    <form action="/classes/form/create" method="post" id="form">
+      <input name="name" id="name" type="text" placeholder="Title" />
+      <textarea class="large-input" name="description" id="description" type="text" placeholder="Type a short description here"></textarea>
+      <p class="small"><span id="charcount">2000</span> characters left</p>
+      <input name="school" id="school" type="text" placeholder="Organization name" value="Public"/>
+      <a class="btn submit-btn" id="submit-form">Submit</a>
+    </form>
+  </div>
+  <div class="sm10-col"></div>
+</div>

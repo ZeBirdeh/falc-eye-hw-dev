@@ -3,6 +3,8 @@
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
 <script src="http://localhost:5005/static/js/class-admin.js"></script>
 {{/section}}
+{{> sidebar this }}
+<div class="content">
 <div class="dashboard" data-cid="{{classID}}">
 <p class="title">{{classObj.name}} - Admin Dashboard</p>
 <a href="/classes/{{classID}}/feed">Back to class feed</a>
@@ -68,6 +70,7 @@
     </div>
   </li>
 </ul>
+</div>
 </div>
 <script>
 document.getElementsByName("time").forEach(elt => {

@@ -170,6 +170,19 @@ div.dropdown-details {
   background-color: #eee;
   padding: 20px 15px 20px 15px;
 }
+.sidebar a {
+  display: block;
+  width: 100%;
+  padding: 5px 15px 5px 15px;
+  font-size: 16px;
+  color: black;
+  text-decoration: none;
+  transition: box-shadow 0.4s, background-color 0.4s;
+}
+.sidebar a:hover {
+  box-shadow: 50px 0px 60px -50px rgb(169, 255, 226) inset;
+  background-color: rgba(0, 0, 0, 0.1);
+}
 .content {
   margin-top: 48px;
   width: calc(100% - 180px);

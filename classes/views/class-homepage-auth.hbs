@@ -1,6 +1,8 @@
 {{#section 'head'}}
 <title>Class Home</title>
 {{/section}}
+{{> sidebar this }}
+<div class="content">
 <h3 class="pagetitle">{{name}} - Homepage</h3>
 <p><a href="/classes/school/{{schoolData.schoolnum}}">
 See other classes from {{schoolData.name}}</a></p>
@@ -15,3 +17,4 @@ See other classes from {{schoolData.name}}</a></p>
 <h4>Menu</h4>
 <p><a href="/classes/{{id}}/feed">Go to class feed</a></p>
 <p>No options yet</p>
+</div>

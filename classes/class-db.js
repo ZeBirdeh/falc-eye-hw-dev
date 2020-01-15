@@ -4,11 +4,6 @@ var db = admin.firestore();
 
 // Takes in classObj where the 'school' field should be the name of the school document
 function createClass(classObj) {
-  let cleanedName = cleanAlpha(classObj.name);
-  if (cleanedName != classObj.name) {
-    // Inputted name was not alphanumeric
-    return new Promise((res, rej) => {res(null)});
-  }
   let result = getSchool(classObj.school).then(schoolDoc => {
     if (schoolDoc === null) {
       // School does not exist
@@ -123,14 +118,21 @@ function getSchoolStartingWith(schoolName) {
 function enrollStudent(username, classID, isAdmin) {
   let classDoc = db.collection('classes').doc(classID);
   let enrollmentRef = db.collection('class-enrollment');
-  let addDoc = enrollmentRef.add({
-    admin: isAdmin,
-    banned: false,
-    class: classDoc,
-    hidden: false,
-    username: username
-  });
-  return addDoc;
+  let aDoc = enrollStatus(username, classID).then(status => {
+    if (status.enrolled) {
+      return;
+    }
+    console.log(`[LOG] create-class: Set ${username} as ${isAdmin ? 'admin' : 'member'} of ${classID}`);
+    let addDoc = enrollmentRef.add({
+      admin: isAdmin,
+      banned: false,
+      class: classDoc,
+      hidden: false,
+      username: username
+    });
+    return addDoc;
+  })
+  return aDoc;
 }
 
 // Checks whether given user is enrolled and returns their role
