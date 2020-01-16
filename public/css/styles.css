@@ -260,15 +260,15 @@ div.hidden-details {
 }
 
 .error-notice {
-  width: 75%;
+  width: 100%;
   display: block;
   float: left;
-  border: 2px solid #e65e5e;
+  border: 1px solid #e65e5e;
   border-radius: 10px;
   background-color: #ffd0d0;
-  padding: 20px;
-  font-size: 18px;
+  padding: 10px;
   font-weight: bold;
+  box-sizing: border-box;
 }
 
 .welcome-bar {

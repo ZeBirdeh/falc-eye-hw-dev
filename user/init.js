@@ -7,11 +7,13 @@ const nodemailer = require('nodemailer');
 const {google} = require('googleapis');
 const session = require('express-session');
 const cookieParser = require('cookie-parser');
+const request = require('request');
 const memoryStore = require('./memory-store-db.js');
 
 const apiAccount = require('../../falc-eye-hw-google-api-u5kt7grp.json');
+const grecaptchaAccount = require('../../falc-eye-hw-grecaptcha-rg2qm9fd0.json');
 const LOGIN_REDIRECT = '/profile';
-const SECRET_KEY = 'CYTm6WvWTR16J2JEjZj9SrQOggbd9ULP';
+const SECRET_KEY = require('../../falc-eye-hw-invite-key-ou6pw5e5.json').secret;
 const HOST = 'http://localhost:5005'
 
 const OAuth2 = google.auth.OAuth2;
@@ -103,28 +105,59 @@ function initUser(app) {
     let email = req.body.email;
     let currentTime = Math.floor(Date.now() / 1000);
     let ipaddr = req.ip;
-    if (!username || !pass || !isEmailFormat(email)) {
-      res.redirect('/register?e=1')
-      return;
-    }
-    authUserDB.getUsers(username).then(userDoc => {
-      if (userDoc) {
-        res.redirect('/register?e=3'); // Username taken
+    let grecaptchaToken = req.body['g-recaptcha-response'];
+    new Promise((resolve, reject) => {
+      request.post(
+        'https://www.google.com/recaptcha/api/siteverify',
+        { form: {
+          secret: grecaptchaAccount.secret,
+          response: grecaptchaToken,
+          remoteip: ipaddr 
+        } },
+        function(err, response, captchaResponse) {
+          if (!err && response.statusCode == 200) {
+            resolve(JSON.parse(captchaResponse));
+          } else {
+            reject(err);
+          }
+        }
+      );
+    }).then(body => {
+      if (!body.success) {
+        res.redirect('/register?e=4');
         return;
       }
-      authUserDB.createUser(username, pass, email, ipaddr, currentTime).then(result => {
-        if (!result) {
-          res.redirect('/register?e=2');
+      if (!username || !pass || !isEmailFormat(email)) {
+        res.redirect('/register?e=1');
+        return;
+      }
+      authUserDB.getUsers(username).then(userDoc => {
+        if (userDoc) {
+          if (!userDoc.get('verified') && (email == userDoc.get('email'))) {
+            sendVerificationEmail(email, username, app);
+            res.redirect('/register?e=5'); // Resent verification email
+            return;
+          }
+          res.redirect('/register?e=3'); // Username taken
           return;
         }
-        sendVerificationEmail(email, username, app);
-        res.redirect('/guide');
+        authUserDB.createUser(username, pass, email, ipaddr, currentTime).then(result => {
+          if (!result) {
+            res.redirect('/register?e=2');
+            return;
+          }
+          sendVerificationEmail(email, username, app);
+          res.redirect('/new-user');
+        })
       })
+    }).catch(err => {
+      console.log(err);
+      res.redirect('/register?e=2');
     })
-  })
+  });
 
   app.get('/register', (req, res) => {
-    res.render('register');
+    res.render('register', {captchaKey: grecaptchaAccount.site});
   })
   
   app.get('/logout', function(req, res){
@@ -142,7 +175,7 @@ function initUser(app) {
     let userOpt = verifyEmailToken(token);
     if (userOpt) {
       authUserDB.verifyUser(userOpt).then(updates => {
-        res.redirect('/login');
+        res.redirect('/login?v=1');
       })
     } else {
       // Bad verification
@@ -156,6 +189,10 @@ function initUser(app) {
 
   app.get('/about', (req, res) => {
     res.render('about');
+  })
+
+  app.get('/new-user', (req, res) => {
+    res.render('new-user');
   })
 }
 

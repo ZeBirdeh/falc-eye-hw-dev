@@ -1,3 +1,5 @@
+const HOST = window.location.origin;
+
 function getUsers(startName) {
   var classID = $('.dashboard').attr('data-cid');
   var url = '/classes/api/'+classID+'/get-users';

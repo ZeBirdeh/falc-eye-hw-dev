@@ -1,14 +1,16 @@
 {{#section 'head'}}
 <title>Register</title>
+<script src="https://www.google.com/recaptcha/api.js" async defer></script>
 {{/section}}
 <div class="small-col"></div>
-<div class="med-col register-form">
+<div class="med-col register-form all-padded">
   <p class="title">Register a new account</p>
 <p class="hidden error-notice" id="errormessage"></p>
 <form method="post">
   <input name="username" id="username" type="text" placeholder="Username" />
   <input name="email" id="email" type="text" placeholder="Email" />
   <input name="password" id="password" type="password" placeholder="Password"/>
+  <div class="g-recaptcha" data-sitekey="{{captchaKey}}"></div>
   <input type="submit" hidden />
   <input type="submit" />
 </form>
@@ -25,5 +27,7 @@
   if (errnum == 1) { $('#errormessage').text("Invalid input.") }
   else if (errnum == 2) { $('#errormessage').text("There was an error when registering. Please try again") }
   else if (errnum == 3) { $('#errormessage').text("Username already taken") }
+  else if (errnum == 4) { $('#errormessage').text("Could not verify captcha. Please try again")}
+  else if (errnum == 5) { $('#errormessage').text("This account already exists. A verification email was resent to the address given.")}
   if (errnum) { $('#errormessage').removeClass('hidden')}
 </script>

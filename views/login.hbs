@@ -23,7 +23,9 @@
   })
   var errnum = queryObj['e'];
   if (errnum == 1) { $('#errormessage').text("Invalid input.") }
-  if (errnum) { $('#errormessage').removeClass('hidden')}
+  var vnum = queryObj['v'];
+  if (vnum == 1) { $('#errormessage').text("You have successfully verified your email. You can now sign in to your account.") }
+  if (errnum || vnum) { $('#errormessage').removeClass('hidden')}
   var redirectStr = queryObj['redirect'];
   $(document).ready(function() {
     $('#submit-form').on('click', function() {
