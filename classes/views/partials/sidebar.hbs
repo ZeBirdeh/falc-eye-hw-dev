@@ -1,8 +1,12 @@
 <div class="sidebar">
+  {{#if hasClassID}}
   <p class="heading">Class Menu</p>
   <a href="/classes/{{classID}}/home">Class Home</a>
   <a href="/classes/{{classID}}/feed">Class Feed</a>
+  <a href="/classes/{{classID}}/item/new">New Assignment</a>
   <p></p>
+  {{/if}}
   <p class="heading">All</p>
   <a href="/">Home</a>
+  <a href="/classes/form/new">New Class</a>
 </div>

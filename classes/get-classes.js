@@ -36,6 +36,8 @@ function init(app) {
 
   // Middleware for each use of class id param, checks the validity of the id
   app.param('classid', (req, res, next, id) => {
+    res.locals.classID = id;
+    res.locals.hasClassID = true;
     if (!isAlphaNumeric(id) || id === "") {
       res.sendFile(path.join(__dirname, '404.html'));
       return;
@@ -64,7 +66,6 @@ function init(app) {
       // Show additional menus if authorized
       classDB.enrollStatus(req.user.data.username, classID).then(userStatus => {
         classObj.userStatus = userStatus;
-        classObj.classID = classID;
         res.render('class-homepage-auth', classObj);
       });
     } else {
@@ -82,7 +83,6 @@ function init(app) {
       if (userStatus.enrolled) {
         assignDB.getAllAssignments(classID).then(assignObj => {
           assignObj.classObj = classObj;
-          assignObj.classID = req.params.classid;
           assignObj.assignments.forEach(tempAssign => {
             tempAssign.isAuthor = (tempAssign.author == req.user.id);
           })
@@ -103,7 +103,6 @@ function init(app) {
       if (userStatus.admin) {
         assignDB.getAllAssignments(classID).then(assignObj => {
           assignObj.classObj = classObj;
-          assignObj.classID = classID;
           assignObj.username = req.user.data.username;
           res.render('class-dashboard-admin', assignObj);
         })

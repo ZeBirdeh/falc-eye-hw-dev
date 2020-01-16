@@ -136,16 +136,23 @@ div.hidden-details {
 
 /* Top navigation header */
 
+.navbar, .navmenu {
+  position: fixed;
+  background-color: #262630;
+  z-index: 100;
+}
 .navbar {
   width: 100%;
   height: 48px;
-  position: fixed;
   top: 0;
-  background-color: #262630;
   box-shadow: 0px 0px 5px 0px #444;
-  z-index: 100;
 }
-.navbar a {
+.navmenu {
+  width: 136px;
+  top: 48px;
+  right: 0;
+}
+.navbar a, .navmenu a {
   display: block;
   float: left;
   padding: 15px 15px 15px 15px;
@@ -155,8 +162,13 @@ div.hidden-details {
   text-align: center;
   transition: background-color 0.4s;
 }
-.navbar a:hover {
+.navbar a:hover, .navmenu a:hover {
   background-color: rgba(255, 255, 255, 0.2);
+}
+.navmenu a {
+  width: 100%;
+  box-sizing: border-box;
+  text-align: left;
 }
 .navbar-right {
   float: right;

@@ -3,12 +3,12 @@
   <a href="#">Updates</a>
   <a href="/guide">Guide</a>
   <div class="navbar-right">
-    <a href=""><div class="menu-icon">
+    {{#if isAuthenticated}}
+    <a id="nav-btn"><div class="menu-icon">
       <div class="icon-bar"></div>
       <div class="icon-bar"></div>
       <div class="icon-bar"></div>
     </div><i class="triangle-down"></i></a>
-    {{#if isAuthenticated}}
     <a href="/profile">Profile</a>
     {{else}}
     <a href="/login">Sign in</a>
@@ -16,3 +16,8 @@
     {{/if}}
   </div>
 </div>
+{{#if isAuthenticated}}
+<div class="navmenu hidden" id="dropdown-nav">
+  <a href="/logout">Sign out</a>
+</div>
+{{/if}}
