@@ -253,7 +253,13 @@ a.submit-btn {
   border-radius: 5px;
   height: 36px;
 }
-
+a.ban-btn {
+  background-image: linear-gradient(#e65e5e, #db2323);
+  display: none;
+}
+.ban-btn-par:hover div a.ban-btn, a.ban-btn:hover {
+  display: inline-flex;
+}
 /* Spacing */
 
 .all-padded { padding: 10px 10px 10px 10px; }
@@ -364,7 +370,7 @@ p.num-display {
   font-size: 18px;
   font-weight: bold;
 }
-.load {
+.load, .emphasized {
   font-weight: bold;
 }
 .xlg-title {

@@ -1,8 +1,18 @@
 const HOST = window.location.origin
 
+function getUsers(startName) {
+  var classID = $('.dashboard').attr('data-cid');
+  var url = '/classes/api/'+classID+'/get-users';
+  return new Promise((resolve, reject) => {
+    $.getJSON(url, { startName: startName }, data => {
+      resolve(data)
+    })
+  })
+}
+
 function getInviteLink() {
   var classID = $('.dashboard').attr('data-cid');
-  var url = HOST + '/classes/api/'+classID+'/new-invite';
+  var url = '/classes/api/'+classID+'/new-invite';
   return new Promise((resolve, reject) => {
     $.post(url, { duration: 3600 }, data => {
       resolve(data)
@@ -12,7 +22,7 @@ function getInviteLink() {
 
 function getAllInvites() {
   var classID = $('.dashboard').attr('data-cid');
-  var url = HOST + '/classes/api/'+classID+'/get-invites';
+  var url = '/classes/api/'+classID+'/get-invites';
   return new Promise((resolve, reject) => {
     $.getJSON(url, {}, data => {
       resolve(data)
@@ -22,7 +32,7 @@ function getAllInvites() {
 
 function deleteAssignment(assignID) {
   var classID = $('.dashboard').attr('data-cid');
-  var url = HOST + '/classes/api/feed/delete-assignment';
+  var url = '/classes/api/feed/delete-assignment';
   return new Promise((resolve, reject) => {
     $.post(url, { class: classID, assign: assignID }, data => {
       resolve(data)
@@ -101,6 +111,37 @@ function setupDeleteButton() {
   })
 }
 
+function setupUserButton() {
+  $('#get-users').one('click', function() {
+    let $userList = $('#users-list');
+    let $bannedUserList = $('#banned-users-list');
+    let startName = $userList.attr('data-last');
+    getUsers(startName).then(result => {
+      if (result.status == 'success') {
+        result.users.forEach(userData => {
+          let $newUser = $('<li/>').addClass('ban-btn-par').html($('<div/>').addClass('med-col').text(userData.username));
+          let $isAdmin = $('<div/>').addClass('small-col')
+          if (userData.isAdmin) { $isAdmin.html($('<span/>').addClass('emphasized').text('Admin')) }
+          $newUser.append($isAdmin);
+          let $banButton = $('<div/>').addClass('small-col').html(
+            $('<a/>').addClass('btn').addClass('ban-btn').text('Ban')
+          );
+          $newUser.append($banButton);
+          if (userData.isBanned) {
+            $bannedUserList.append($newUser);
+          } else {
+            $userList.append($newUser);
+          }
+        })
+        let lastName = result.users[result.users.length - 1].username;
+        $userList.attr('data-last', lastName);
+      } else {
+        // Display error
+      }
+    });
+  })
+}
+
 function confirmPopup(onConfirm) {
   var popup = '<div class="popup">\n'+
     '<p class="heading">Are you sure you want to delete this assignment</p>\n'+
@@ -126,4 +167,5 @@ $(document).ready( function() {
   setupInviteButton();
   initializeInviteLinks();
   setupDeleteButton();
+  setupUserButton();
 })

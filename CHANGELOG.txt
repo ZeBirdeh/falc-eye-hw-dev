@@ -3,11 +3,10 @@ added/changed/deprecated/removed/fixed/security
 See https://keepachangelog.com/en/0.3.0/
 
 ### TODO High Priority
-→ Set maximum length for description in forms
-→ write an about and home page
-→ Update formatting for assignment and class creation
+→ write an about and home page (in progress)
 → User management in class admin section
 ### TODO Low Priority
+→ invisible submit button on forms
 → class assignments (shared progress)
 → Fix URI parse error with % in parameter
 → 200px + 40% for center bar 30% - 100px for sides

@@ -25,10 +25,22 @@
       <a class="btn dropdown-trigger">Update class details</a>
       <div class="dropdown-details">
         <p>Group name</p>
-        <textarea class="line-input" autocomplete="off">{{classObj.name}}</textarea>
+        <input autocomplete="off" val="{{classObj.name}}"/>
         <p>Description</p>
         <textarea class="large-input" autocomplete="off">{{classObj.description}}</textarea>
         <a class="btn update-btn">Save changes</a>
+      </div>
+    </div>
+  </li>
+  <li>
+    <div class="all-padded">
+      <p class="heading">Manage users</p>
+      <a class="btn dropdown-trigger" id="get-users">View users</a>
+      <div class="dropdown-details">
+        <p class="heading">Members</p>
+        <ul id="users-list" data-last=""></ul>
+        <p class="heading">Banned users</p>
+        <ul id="banned-users-list"></ul>
       </div>
     </div>
   </li>

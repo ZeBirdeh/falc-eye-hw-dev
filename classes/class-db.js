@@ -157,6 +157,25 @@ function enrollStatus(username, classID) {
   return getDoc;
 }
 
+// Get all enroll docs for a specific class sorted by name
+function getEnrolledSortByName(classID, startAt, limit=20) {
+  let classDoc = db.collection('classes').doc(classID);
+  let enrollmentRef = db.collection('class-enrollment');
+  let aDoc = enrollmentRef.where('class', '==', classDoc).where('username', '>', startAt)
+    .orderBy('username').limit(limit).get().then(snapshot => {
+    let enrolledUsers = [];
+    snapshot.forEach(doc => {
+      enrolledUsers.push({
+        username: doc.get('username'),
+        isAdmin: doc.get('admin'),
+        isBanned: doc.get('banned')
+      });
+    })
+    return enrolledUsers;
+  })
+  return aDoc;
+}
+
 // Gets all invite links corresponding to a class
 function getNumClassInvites(classID) {
   let inviteRef = db.collection('invites');
@@ -245,6 +264,7 @@ module.exports = {
   enrollStudent: enrollStudent,
   enrollStatus: enrollStatus,
   checkInviteUsed: checkInviteUsed,
+  getEnrolledSortByName: getEnrolledSortByName,
   getNumClassInvites: getNumClassInvites,
   getClassInvites: getClassInvites,
   getInvite: getInvite,

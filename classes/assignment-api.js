@@ -29,6 +29,24 @@ function init(app) {
     })
     return next();
   }
+  function adminMiddleware(req, res, next) {
+    if (!req.isAuthenticated()) {
+      res.json({status: 'unauthenticated'});
+      return;
+    }
+    let username = req.user.data.username;
+    let classID = req.params.classid;
+    classDB.enrollStatus(username, classID).then(userStatus => {
+      if (!userStatus.admin) {
+        res.json({status: 'unauthorized'});
+        return;
+      }
+      return next();
+    }).catch(err => {
+      console.error(err);
+      res.json({status: 'error'});
+    });
+  }
   // API to get assignment status. needs classID, assignID
   app.get('/api/feed/assignment-status', feedMiddleware, (req, res) => {
     userID = req.user.id;
@@ -84,57 +102,55 @@ function init(app) {
   })
 
   // API call, get invite links
-  app.get('/api/:classid/get-invites', (req, res) => {
-    let username = req.user.data.username;
+  app.get('/api/:classid/get-invites', adminMiddleware, (req, res) => {
     let classID = req.params.classid;
-    classDB.enrollStatus(username, classID).then(userStatus => {
-      if (!userStatus.admin) {
-        res.json({status: 'unauthorized'});
+    classDB.getClassInvites(classID).then(invites => {
+      if (invites === null) {
+        res.json({status: 'error'});
         return;
       }
-      classDB.getClassInvites(classID).then(invites => {
-        if (invites === null) {
-          res.json({status: 'error'});
-          return;
+      let validInvites = [];
+      let timeNow = Date.now() / 1000;
+      invites.forEach(invite => {
+        if (invite.expires > timeNow) {
+          validInvites.push(invite);
         }
-        let validInvites = [];
-        let timeNow = Date.now() / 1000;
-        invites.forEach(invite => {
-          if (invite.expires > timeNow) {
-            validInvites.push(invite);
-          }
-        })
-        res.json({status: 'success', invites: validInvites});
       })
+      res.json({status: 'success', invites: validInvites});
     });
   })
   // API call, post to get valid token and add to invites database
-  app.post('/api/:classid/new-invite', (req, res) => {
+  app.post('/api/:classid/new-invite', adminMiddleware, (req, res) => {
     // Check that user is an admin of the class of classID
-    let username = req.user.data.username;
     let classID = req.params.classid;
-    classDB.enrollStatus(username, classID).then(userStatus => {
-      if (!userStatus.admin) {
-        res.json({status: 'unauthorized'});
-        return;
-      }
-      let expires = Math.floor(Date.now() / 1000) + parseInt(req.body.duration);
-      if (isNaN(expires)) { 
-        res.json({status: 'invalid'});
-        return;
-      }
-      new Promise(genToken).then(validToken => {
-        console.log('[LOG] assignment-api: Valid token generated')
-        classDB.addInviteLink(classID, expires, validToken).then(inviteDoc => {
-          console.log(`[LOG] get-classes: New invite link ${validToken} for ${classID}`);
-          res.json({status: 'success', invite:{id: validToken, expires: expires}});
-        })
-      }).catch(err => {
-        console.error(err);
-        res.json({status: 'error'});
+    let expires = Math.floor(Date.now() / 1000) + parseInt(req.body.duration);
+    if (isNaN(expires)) { 
+      res.json({status: 'invalid'});
+      return;
+    }
+    new Promise(genToken).then(validToken => {
+      console.log('[LOG] assignment-api: Valid token generated')
+      classDB.addInviteLink(classID, expires, validToken).then(inviteDoc => {
+        console.log(`[LOG] get-classes: New invite link ${validToken} for ${classID}`);
+        res.json({status: 'success', invite:{id: validToken, expires: expires}});
       })
+    }).catch(err => {
+      console.error(err);
+      res.json({status: 'error'});
     })
-  })
+  });
+
+  app.get('/api/:classid/get-users', adminMiddleware, (req, res) => {
+    let startName = req.user.data.startName;
+    let classID = req.params.classid;
+    if (!startName) { startName = '' }
+    classDB.getEnrolledSortByName(classID, startName, 20).then(usersList => {
+      res.json({status: 'success', users: usersList});
+    }).catch(err => {
+      console.error(err);
+      res.json({status: 'error'});
+    });
+  });
 }
 
 // Creates a whole ton of nested promises
