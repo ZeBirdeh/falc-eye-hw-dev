@@ -153,6 +153,10 @@ function initUser(app) {
   app.get('/guide', (req, res) => {
     res.render('guide');
   })
+
+  app.get('/about', (req, res) => {
+    res.render('about');
+  })
 }
 
 function init(app) {
