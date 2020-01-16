@@ -128,6 +128,11 @@ div.dropdown-details {
   border: 2px 0px 2px 0px solid #888;
   background-color: #ddd;
 }
+div.hidden-details {
+  padding: 10px;
+  border: 1px solid #888;
+  background-color: #ddd;
+}
 
 /* Top navigation header */
 
@@ -255,10 +260,16 @@ a.submit-btn {
 }
 a.ban-btn {
   background-image: linear-gradient(#e65e5e, #db2323);
-  display: none;
-}
-.ban-btn-par:hover div a.ban-btn, a.ban-btn:hover {
   display: inline-flex;
+  visibility: hidden;
+}
+li.user {
+  display: flex;
+  align-items: center;
+  overflow-y: auto;
+}
+li.user:hover div a.ban-btn, a.ban-btn:hover {
+  visibility: visible;
 }
 /* Spacing */
 

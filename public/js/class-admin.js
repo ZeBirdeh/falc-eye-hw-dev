@@ -58,6 +58,7 @@ function minimizeDetails() {
     $dropdown.animate({'height': newHeight}, speed)
     $dropdown.children().animate({'opacity': newOpacity}, speed)
   });
+  $('.hidden-details').css('display', 'none');
 }
 
 function addInviteText(invite) {
@@ -113,13 +114,14 @@ function setupDeleteButton() {
 
 function setupUserButton() {
   $('#get-users').one('click', function() {
+    $(this).next('.hidden-details').css('display', 'block');
     let $userList = $('#users-list');
     let $bannedUserList = $('#banned-users-list');
     let startName = $userList.attr('data-last');
     getUsers(startName).then(result => {
       if (result.status == 'success') {
         result.users.forEach(userData => {
-          let $newUser = $('<li/>').addClass('ban-btn-par').html($('<div/>').addClass('med-col').text(userData.username));
+          let $newUser = $('<li/>').addClass('user').html($('<div/>').addClass('med-col').text(userData.username));
           let $isAdmin = $('<div/>').addClass('small-col')
           if (userData.isAdmin) { $isAdmin.html($('<span/>').addClass('emphasized').text('Admin')) }
           $newUser.append($isAdmin);
