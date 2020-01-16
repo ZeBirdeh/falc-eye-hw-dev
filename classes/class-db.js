@@ -196,6 +196,23 @@ function banUser(username, classID) {
   return aDoc;
 }
 
+function removeUser(username, classID) {
+  let classDoc = db.collection('classes').doc(classID);
+  let enrollmentRef = db.collection('class-enrollment');
+  let aDoc = enrollmentRef.where('username', '==', username).where('class', '==', classDoc)
+    .get().then(snapshot => {
+    if (snapshot.empty) {
+      return;
+    }
+    let enrollDocs = [];
+    snapshot.forEach(doc => {
+      enrollDocs.push(doc.id);
+    })
+    return enrollmentRef.doc(enrollDocs[0]).delete();
+  })
+  return aDoc;
+}
+
 // Gets all invite links corresponding to a class
 function getNumClassInvites(classID) {
   let inviteRef = db.collection('invites');
@@ -284,6 +301,7 @@ module.exports = {
   enrollStudent: enrollStudent,
   enrollStatus: enrollStatus,
   banUser: banUser,
+  removeUser: removeUser,
   checkInviteUsed: checkInviteUsed,
   getEnrolledSortByName: getEnrolledSortByName,
   getNumClassInvites: getNumClassInvites,

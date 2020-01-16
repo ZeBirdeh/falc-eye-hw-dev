@@ -104,6 +104,7 @@ function init(app) {
         assignDB.getAllAssignments(classID).then(assignObj => {
           assignObj.classObj = classObj;
           assignObj.classID = classID;
+          assignObj.username = req.user.data.username;
           res.render('class-dashboard-admin', assignObj);
         })
       } else {

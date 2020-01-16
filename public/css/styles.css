@@ -205,6 +205,26 @@ div.hidden-details {
   width: 100%;
 }
 
+.snackbar {
+  visibility: hidden;
+  opacity: 0;
+  width: 250px;
+  margin-left: -125px;
+  padding: 10px;
+  background-color: #262630;
+  color: rgb(169, 255, 226);
+  position: fixed;
+  z-index: 1;
+  left: 50%;
+  bottom: 0px;
+  transition: opacity 0.5s, bottom 0.5s;
+}
+.snackbar[show] {
+  visibility: visible;
+  opacity: 1;
+  bottom: 30px;
+}
+
 .confirm-overlay {
   position: fixed;
   width: 100%;
@@ -258,20 +278,25 @@ a.submit-btn {
   border-radius: 5px;
   height: 36px;
 }
-a.ban-btn {
-  background-image: linear-gradient(#e65e5e, #db2323);
+a.ban-btn, a.remove-btn {
   display: inline-flex;
   opacity: 0;
-  color: white;
   transition: opacity 0.1s;
+}
+a.ban-btn {
+  background-image: linear-gradient(#e65e5e, #db2323);
+  color: white;
 }
 li.user {
   display: flex;
   align-items: center;
   overflow-y: auto;
 }
-li.user:hover div a.ban-btn, a.ban-btn:hover {
+li.user:hover div a.ban-btn {
   background-color: #d02020;
+  opacity: 1;
+}
+li.user:hover div a.remove-btn {
   opacity: 1;
 }
 /* Spacing */

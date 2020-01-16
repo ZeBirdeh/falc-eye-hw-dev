@@ -48,6 +48,16 @@ function banUser(username) {
   })
 }
 
+function removeUser(username) {
+  var classID = $('.dashboard').attr('data-cid');
+  var url = '/classes/api/'+classID+'/remove-user';
+  return new Promise((resolve, reject) => {
+    $.post(url, { username: username }, data => {
+      resolve(data)
+    })
+  })
+}
+
 function minimizeDetails() {
   var speed = 500;
   // Save heights to each section under data-fullheight and minimize
@@ -83,7 +93,7 @@ function setupInviteButton() {
       if (result.status == 'success') {
         addInviteText(result.invite);
       } else {
-        // Display error
+        snackbarText('Error in creating invite link');
       }
     });
   })
@@ -126,26 +136,51 @@ function setupUserButton() {
     let $userList = $('#users-list');
     let $bannedUserList = $('#banned-users-list');
     let startName = $userList.attr('data-last');
+    let adminUsername = $userList.attr('data-username');
     getUsers(startName).then(result => {
       if (result.status == 'success') {
         result.users.forEach(userData => {
+          // Fill row with user information
           let $newUser = $('<li/>').addClass('user').html($('<div/>').addClass('med-col').text(userData.username));
           let $isAdmin = $('<div/>').addClass('small-col')
           if (userData.isAdmin) { $isAdmin.html($('<span/>').addClass('emphasized').text('Admin')) }
           $newUser.append($isAdmin);
+          let $buttons = $('<div/>').addClass('small-col')
+          if (adminUsername == userData.username) {
+            $newUser.append($buttons.html('<span class="heading">You</span>'));
+            $userList.append($newUser);
+            return; // Skip the button generation
+          }
+          // Generate the remove button
+          let $removeButton = $('<a/>').addClass('btn').addClass('remove-btn').text('Remove').on('click', function() {
+            let username = $newUser.children().first().text();
+            removeUser(username).then(status => {
+              if (status.status == 'success') {
+                $newUser.remove();
+              } else {
+                snackbarText('There was an error in removing this user');
+              }
+            });
+          });
+          // Add the remove button
+          $buttons.append($removeButton);
           if (userData.isBanned) {
+            $newUser.append($buttons)
             $bannedUserList.append($newUser);
           } else {
-            let $banButton = $('<div/>').addClass('small-col').html(
-              $('<a/>').addClass('btn').addClass('ban-btn').text('Ban')
-            ).one('click', function() {
-              let $this = $(this)
+            // Generate and add the ban button
+            let $banButton = $('<a/>').addClass('btn').addClass('ban-btn').text('Ban').on('click', function() {
               let username = $newUser.children().first().text();
-              banUser(username);
-              $this.remove();
-              $bannedUserList.append($newUser.remove());
+              banUser(username).then(status => {
+                if (status.status == 'success') {
+                  $(this).remove();
+                  $bannedUserList.append($newUser.remove());
+                } else {
+                  snackbarText('There was an error in banning this user');
+                }
+              });
             });
-            $newUser.append($banButton);
+            $newUser.append($buttons.prepend($banButton));
             $userList.append($newUser);
           }
         })
@@ -156,6 +191,13 @@ function setupUserButton() {
       }
     });
   })
+}
+
+function snackbarText(text) {
+  $('.snackbar').text(text).attr('show', '');
+  setTimeout(function() {
+    $('.snackbar').removeAttr('show');
+  }, 5000);
 }
 
 function confirmPopup(onConfirm) {

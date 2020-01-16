@@ -164,7 +164,23 @@ function init(app) {
         res.json({status: 'failure'});
         return;
       }
-      res.json({status: 'sucess'});
+      res.json({status: 'success'});
+    })
+  })
+
+  app.post('/api/:classid/remove-user', adminMiddleware, (req, res) => {
+    let username = req.body.username;
+    if (!username) {
+      res.json({status: 'invalid'});
+      return;
+    }
+    let classID = req.params.classid;
+    classDB.removeUser(username, classID).then(result => {
+      if (!result) {
+        res.json({status: 'failure'});
+        return;
+      }
+      res.json({status: 'success'});
     })
   })
 }

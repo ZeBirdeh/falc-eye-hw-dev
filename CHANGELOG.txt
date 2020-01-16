@@ -4,7 +4,6 @@ See https://keepachangelog.com/en/0.3.0/
 
 ### TODO High Priority
 → write an about and home page (in progress)
-→ User management in class admin section
 ### TODO Low Priority
 → invisible submit button on forms
 → class assignments (shared progress)

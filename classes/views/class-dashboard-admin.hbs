@@ -24,11 +24,13 @@
       <p class="heading">Class details</p>
       <a class="btn dropdown-trigger">Update class details</a>
       <div class="dropdown-details">
-        <p>Group name</p>
-        <input autocomplete="off" val="{{classObj.name}}"/>
-        <p>Description</p>
-        <textarea class="large-input" autocomplete="off">{{classObj.description}}</textarea>
-        <a class="btn update-btn">Save changes</a>
+        <div class="all-padded">
+          <p>Group name</p>
+          <input autocomplete="off" val="{{classObj.name}}"/>
+          <p>Description</p>
+          <textarea class="large-input" autocomplete="off">{{classObj.description}}</textarea>
+          <a class="btn update-btn">Save changes</a>
+        </div>
       </div>
     </div>
   </li>
@@ -38,7 +40,7 @@
       <a class="btn" id="get-users">View users</a>
       <div class="hidden-details">
         <p class="heading">Members</p>
-        <ul id="users-list" data-last=""></ul>
+        <ul id="users-list" data-last="" data-username="{{username}}"></ul>
         <hr width="80%">
         <p class="heading">Banned users</p>
         <ul id="banned-users-list"></ul>
@@ -85,6 +87,7 @@
 </ul>
 </div>
 </div>
+<div class="snackbar"></div>
 <script>
 document.getElementsByName("time").forEach(elt => {
     elt.innerHTML = new Date(parseInt(elt.innerHTML)*1000).toLocaleString()
