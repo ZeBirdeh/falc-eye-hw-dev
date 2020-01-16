@@ -129,9 +129,15 @@ function init(app) {
           res.render('invalid-invite');
           return;
         }
-        classDB.enrollStudent(req.user.data.username, inviteData.class, false).then(enrollDoc => {
-          // Render invite page that redirects after a second
-          res.render('valid-invite', {class: inviteData.class});
+        classDB.enrollStatus(req.user.data.username, inviteData.class).then(enrollStatus => {
+          if (enrollStatus.banned) {
+            res.render('banned-invite');
+            return;
+          }
+          classDB.enrollStudent(req.user.data.username, inviteData.class, false).then(enrollRef => {
+            // Render invite page that redirects after a second
+            res.render('valid-invite', {class: inviteData.class});
+          })
         })
       }).catch(err => {
         console.error(err);

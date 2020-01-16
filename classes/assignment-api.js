@@ -141,7 +141,7 @@ function init(app) {
   });
 
   app.get('/api/:classid/get-users', adminMiddleware, (req, res) => {
-    let startName = req.user.data.startName;
+    let startName = req.body.startName;
     let classID = req.params.classid;
     if (!startName) { startName = '' }
     classDB.getEnrolledSortByName(classID, startName, 20).then(usersList => {
@@ -151,6 +151,22 @@ function init(app) {
       res.json({status: 'error'});
     });
   });
+
+  app.post('/api/:classid/ban-user', adminMiddleware, (req, res) => {
+    let username = req.body.username;
+    if (!username) {
+      res.json({status: 'invalid'});
+      return;
+    }
+    let classID = req.params.classid;
+    classDB.banUser(username, classID).then(result => {
+      if (!result) {
+        res.json({status: 'failure'});
+        return;
+      }
+      res.json({status: 'sucess'});
+    })
+  })
 }
 
 // Creates a whole ton of nested promises

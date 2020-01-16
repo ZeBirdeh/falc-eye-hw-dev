@@ -261,7 +261,9 @@ a.submit-btn {
 a.ban-btn {
   background-image: linear-gradient(#e65e5e, #db2323);
   display: inline-flex;
-  visibility: hidden;
+  opacity: 0;
+  color: white;
+  transition: opacity 0.1s;
 }
 li.user {
   display: flex;
@@ -269,7 +271,8 @@ li.user {
   overflow-y: auto;
 }
 li.user:hover div a.ban-btn, a.ban-btn:hover {
-  visibility: visible;
+  background-color: #d02020;
+  opacity: 1;
 }
 /* Spacing */
 

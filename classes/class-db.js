@@ -115,6 +115,7 @@ function getSchoolStartingWith(schoolName) {
 }
 
 // Enroll a student in a class, and supply whether they are an administrator
+// Returns the status
 function enrollStudent(username, classID, isAdmin) {
   let classDoc = db.collection('classes').doc(classID);
   let enrollmentRef = db.collection('class-enrollment');
@@ -144,15 +145,17 @@ function enrollStatus(username, classID) {
     if (snapshot.empty) {
       console.log('No matching documents.');
       // Not enrolled in the class
-      return { enrolled: false, admin: false };
+      return { enrolled: false, admin: false, banned: false };
     }
     
-    var isAdmin = false;
+    let isAdmin = false;
+    let isBanned = false;
     snapshot.forEach(doc => {
-      if (doc.data().admin) { isAdmin = true; }
+      if (doc.get('admin')) { isAdmin = true; }
+      if (doc.get('banned')) { isBanned = true; }
     })
     // Return admin status
-    return { enrolled: true, admin: isAdmin };
+    return { enrolled: !isBanned, admin: (!isBanned && isAdmin), banned: isBanned };
   })
   return getDoc;
 }
@@ -172,6 +175,23 @@ function getEnrolledSortByName(classID, startAt, limit=20) {
       });
     })
     return enrolledUsers;
+  })
+  return aDoc;
+}
+
+function banUser(username, classID) {
+  let classDoc = db.collection('classes').doc(classID);
+  let enrollmentRef = db.collection('class-enrollment');
+  let aDoc = enrollmentRef.where('username', '==', username).where('class', '==', classDoc)
+    .get().then(snapshot => {
+    if (snapshot.empty) {
+      return;
+    }
+    let enrollDocs = [];
+    snapshot.forEach(doc => {
+      enrollDocs.push(doc.id);
+    })
+    return enrollmentRef.doc(enrollDocs[0]).update( { banned: true } );
   })
   return aDoc;
 }
@@ -263,6 +283,7 @@ module.exports = {
   getClasses: getClasses,
   enrollStudent: enrollStudent,
   enrollStatus: enrollStatus,
+  banUser: banUser,
   checkInviteUsed: checkInviteUsed,
   getEnrolledSortByName: getEnrolledSortByName,
   getNumClassInvites: getNumClassInvites,

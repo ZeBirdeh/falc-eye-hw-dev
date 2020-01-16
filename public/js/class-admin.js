@@ -1,5 +1,3 @@
-const HOST = window.location.origin
-
 function getUsers(startName) {
   var classID = $('.dashboard').attr('data-cid');
   var url = '/classes/api/'+classID+'/get-users';
@@ -35,6 +33,16 @@ function deleteAssignment(assignID) {
   var url = '/classes/api/feed/delete-assignment';
   return new Promise((resolve, reject) => {
     $.post(url, { class: classID, assign: assignID }, data => {
+      resolve(data)
+    })
+  })
+}
+
+function banUser(username) {
+  var classID = $('.dashboard').attr('data-cid');
+  var url = '/classes/api/'+classID+'/ban-user';
+  return new Promise((resolve, reject) => {
+    $.post(url, { username: username }, data => {
       resolve(data)
     })
   })
@@ -125,13 +133,19 @@ function setupUserButton() {
           let $isAdmin = $('<div/>').addClass('small-col')
           if (userData.isAdmin) { $isAdmin.html($('<span/>').addClass('emphasized').text('Admin')) }
           $newUser.append($isAdmin);
-          let $banButton = $('<div/>').addClass('small-col').html(
-            $('<a/>').addClass('btn').addClass('ban-btn').text('Ban')
-          );
-          $newUser.append($banButton);
           if (userData.isBanned) {
             $bannedUserList.append($newUser);
           } else {
+            let $banButton = $('<div/>').addClass('small-col').html(
+              $('<a/>').addClass('btn').addClass('ban-btn').text('Ban')
+            ).one('click', function() {
+              let $this = $(this)
+              let username = $newUser.children().first().text();
+              banUser(username);
+              $this.remove();
+              $bannedUserList.append($newUser.remove());
+            });
+            $newUser.append($banButton);
             $userList.append($newUser);
           }
         })
