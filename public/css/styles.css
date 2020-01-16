@@ -170,7 +170,7 @@ div.hidden-details {
   box-sizing: border-box;
   text-align: left;
 }
-.navbar-right {
+.navbar-right, .right {
   float: right;
 }
 

@@ -8,12 +8,15 @@ const {google} = require('googleapis');
 const session = require('express-session');
 const cookieParser = require('cookie-parser');
 const request = require('request');
+const fs = require('fs');
+const path = require('path');
 const memoryStore = require('./memory-store-db.js');
 
 const apiAccount = require('../../falc-eye-hw-google-api-u5kt7grp.json');
 const grecaptchaAccount = require('../../falc-eye-hw-grecaptcha-rg2qm9fd0.json');
 const LOGIN_REDIRECT = '/profile';
 const SECRET_KEY = require('../../falc-eye-hw-invite-key-ou6pw5e5.json').secret;
+const changelogFile = fs.readFileSync(path.join(__dirname, '..', '..', 'CHANGELOG.txt'));
 const HOST = 'http://localhost:5005'
 
 const OAuth2 = google.auth.OAuth2;
@@ -193,6 +196,10 @@ function initUser(app) {
 
   app.get('/new-user', (req, res) => {
     res.render('new-user');
+  })
+
+  app.get('/updates', (req, res) => {
+    res.render('updates', {changelog: changelogFile});
   })
 }
 

@@ -15,7 +15,7 @@ function init(app) {
     if (isNaN(schoolNum) || schoolNum === "") {
       // Only query for school #
       console.log("Error in getting school number. Request parameters: " + req.params);
-      res.status(404).sendFile(path.join(__dirname, '404.html'));
+      res.status(404).render('404');
       return;
     }
     console.log("[LOG] get-classes: Request made with school number " + schoolNum)
@@ -30,7 +30,7 @@ function init(app) {
     }).catch(err => {
       // Catches any exception and sends 404 page
       console.log('Failed to get schools.', err);
-      res.status(404).sendFile(path.join(__dirname, '404.html'));
+      res.status(404).render('404');
     });
   });
 
@@ -39,7 +39,7 @@ function init(app) {
     res.locals.classID = id;
     res.locals.hasClassID = true;
     if (!isAlphaNumeric(id) || id === "") {
-      res.sendFile(path.join(__dirname, '404.html'));
+      res.status(404).render('404');
       return;
     }
     classDB.getClassSchoolDataFromID(id).then(classObj => {
@@ -48,12 +48,12 @@ function init(app) {
         res.locals.classObj = classObj
         next();
       } else {
-        res.status(404).sendFile(path.join(__dirname, '404.html'));
+        res.status(404).render('404');
       }
     }).catch(err => {
       // Catches any exception and sends 404 page
-      console.log('[WARN] get-classes: Failed to get schools.', err);
-      res.status(404).sendFile(path.join(__dirname, '404.html'));
+      console.log('[WARN] get-classes: Failed to get class.', err);
+      res.status(404).render('404');
     });
   });
   
@@ -152,6 +152,7 @@ function init(app) {
 
   // Using GET query on /classes instead of /classes/#
   // Same code as above except params switched for query, and does not cache
+  /*
   app.get('/', (req, res) => {
     // Params for the school # in request.params
     let schoolNum = req.query.school;
@@ -161,7 +162,6 @@ function init(app) {
       res.status(404).sendFile(path.join(__dirname, '404.html'));
       return;
     }
-    console.log("Request made to /classes with school number " + schoolNum)
     classDB.getClasses(schoolNum).then(classesObj => {
       // Check to see how many classes there are.
       if (classesObj.classes.length > 0) {
@@ -176,6 +176,7 @@ function init(app) {
       res.status(404).sendFile(path.join(__dirname, '404.html'));
     });
   });
+  */
 }
 
 // Returns whether a string is comprised of only number and letter characters

@@ -85,7 +85,7 @@ function addInviteText(invite) {
   $linkDisplay = $('#invite-links');
   var dateString = new Date(parseInt(invite.expires) * 1000).toLocaleString();
   var displayText = '<p class="invite-link">'+HOST+'/classes/invite/'+invite.id+
-    ' <span class="small">Expires: '+dateString+'</span></p>';
+    ' <span class="small right">Expires: '+dateString+'</span></p>';
   $linkDisplay.append(displayText);
 }
 
