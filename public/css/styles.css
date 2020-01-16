@@ -240,6 +240,7 @@ div.dropdown-details {
   background-color: #383840;
   color: #ddd;
   overflow-y: auto;
+  margin-bottom: 40px;
 }
 .welcome-bar .title, .welcome-bar .xlg-title {
   color: rgb(169, 255, 226);
