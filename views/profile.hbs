@@ -5,10 +5,10 @@
 <div class="md30-col ns-padded">
   <p class="title">Profile Info</p>
   <p>Username: {{userData.username}}</p>
-  <p class="small">Account created on <span name="time">{{userData.created}}</span></p>
+  <p class="small">Account created on <span name="time">{{userCreated}}</span></p>
 </div>
 <div class="med-col ns-padded">
-  <p class="heading">My classes</p>
+  <p class="heading">Your classes</p>
   {{#if hasClasses}}
   <ul>
     {{#each classes}}

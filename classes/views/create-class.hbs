@@ -7,10 +7,14 @@
   <div class="lg80-col ns-padded">
     <p class="title">Create new class</p>
     <form action="/classes/form/create" method="post" id="form">
-      <input name="name" id="name" type="text" placeholder="Title" />
-      <textarea class="large-input" name="description" id="description" type="text" placeholder="Type a short description here"></textarea>
+      <input name="name" id="name" type="text" placeholder="Title" required/>
+      <textarea class="large-input" name="description" id="description" maxlength="2000" type="text" placeholder="Type a short description here" required></textarea>
       <p class="small"><span id="charcount">2000</span> characters left</p>
-      <input name="school" id="school" type="text" placeholder="Organization name" value="Public"/>
+      <select name="postperm" id="postperm" form="form">
+        <option value="0">Only admins can post</option>
+        <option value="1">Anyone can post</option>
+      </select>
+      <input name="school" id="school" type="text" placeholder="Organization name" value="Public" hidden/>
       <a class="btn submit-btn" id="submit-form">Submit</a>
     </form>
   </div>

@@ -41,21 +41,57 @@ function deleteAssignment(assignID) {
 }
 
 function banUser(username) {
+  let onConfirmFunction = () => {
+    var classID = $('.dashboard').attr('data-cid');
+    var url = '/classes/api/'+classID+'/ban-user';
+    return new Promise((resolve, reject) => {
+      $.post(url, { username: username }, data => {
+        resolve(data)
+      })
+    })
+  }
+  let onCancel = () => {return {status: 'cancelled'}}
+  return confirmPopup('Are you sure you want to ban this user?', onConfirmFunction, onCancel);
+}
+
+function removeUser(username) {
+  let onConfirmFunction = () => {
+    var classID = $('.dashboard').attr('data-cid');
+    var url = '/classes/api/'+classID+'/remove-user';
+    return new Promise((resolve, reject) => {
+      $.post(url, { username: username }, data => {
+        resolve(data)
+      })
+    })
+  }
+  let onCancel = () => {return {status: 'cancelled'}}
+  return confirmPopup('Are you sure you want to remove this user?', onConfirmFunction, onCancel);
+}
+
+function updateClassDetails() {
   var classID = $('.dashboard').attr('data-cid');
-  var url = '/classes/api/'+classID+'/ban-user';
+  let url = '/classes/api/'+classID+'/update-data';
+  let className = $('#class-name').val();
+  let classDesc = $('#class-description').val();
   return new Promise((resolve, reject) => {
-    $.post(url, { username: username }, data => {
+    $.post(url, { name: className, description: classDesc }, data => {
       resolve(data)
     })
   })
 }
 
-function removeUser(username) {
-  var classID = $('.dashboard').attr('data-cid');
-  var url = '/classes/api/'+classID+'/remove-user';
-  return new Promise((resolve, reject) => {
-    $.post(url, { username: username }, data => {
-      resolve(data)
+function initClassUpdate() {
+  $('#charcount').text(2000 - $('#class-description').val().length)
+  $('#class-description').on('input', function() {
+    $('#charcount').text(2000 - $(this).val().length)
+  })
+  $('#update-btn').on('click', function() {
+    updateClassDetails().then(result => {
+      if (result.status == 'success') {
+        snackbarText('Succesfully updated class details');
+      } else {
+        snackbarText('Failed to update class details. Please try again later.')
+      }
     })
   })
 }
@@ -94,8 +130,10 @@ function setupInviteButton() {
     getInviteLink().then(result => {
       if (result.status == 'success') {
         addInviteText(result.invite);
+      } else if (result.status == 'failed') {
+        snackbarText('The maximum number of active invites has been reached.');
       } else {
-        snackbarText('Error in creating invite link');
+        snackbarText('Error in creating invite link.');
       }
     });
   })
@@ -108,7 +146,7 @@ function initializeInviteLinks() {
         addInviteText(invite);
       })
     } else {
-      // Display error
+      addInviteText('Failed to fetch active invites.')
     }
   })
 }
@@ -128,7 +166,7 @@ function setupDeleteButton() {
         }
       })
     }
-    confirmPopup(onConfirmFunction);
+    confirmPopup('Are you sure you want to delete this assignment?', onConfirmFunction);
   })
 }
 
@@ -154,12 +192,12 @@ function setupUserButton() {
             return; // Skip the button generation
           }
           // Generate the remove button
-          let $removeButton = $('<a/>').addClass('btn').addClass('remove-btn').text('Remove').on('click', function() {
+          let $removeButton = $('<a/>').addClass('btn remove-btn').text('Remove').on('click', function() {
             let username = $newUser.children().first().text();
             removeUser(username).then(status => {
               if (status.status == 'success') {
                 $newUser.remove();
-              } else {
+              } else if (!(status.status == 'cancelled')) {
                 snackbarText('There was an error in removing this user');
               }
             });
@@ -171,18 +209,18 @@ function setupUserButton() {
             $bannedUserList.append($newUser);
           } else {
             // Generate and add the ban button
-            let $banButton = $('<a/>').addClass('btn').addClass('ban-btn').text('Ban').on('click', function() {
+            let $banButton = $('<a/>').addClass('btn ban-btn right').text('Ban').on('click', function() {
               let username = $newUser.children().first().text();
               banUser(username).then(status => {
                 if (status.status == 'success') {
                   $(this).remove();
                   $bannedUserList.append($newUser.remove());
-                } else {
+                } else if (!(status.status == 'cancelled')) {
                   snackbarText('There was an error in banning this user');
                 }
               });
             });
-            $newUser.append($buttons.prepend($banButton));
+            $newUser.append($buttons.append($banButton));
             $userList.append($newUser);
           }
         })
@@ -202,23 +240,26 @@ function snackbarText(text) {
   }, 5000);
 }
 
-function confirmPopup(onConfirm) {
-  var popup = '<div class="popup">\n'+
-    '<p class="heading">Are you sure you want to delete this assignment</p>\n'+
-    '<p id="assign-name"></p>\n'+
-    '<a class="btn cancel-btn">Cancel</a>'+
-    '<a class="btn confirm-btn">Confirm</a></div>'
-  var overlay = $('<div/>', {class: 'confirm-overlay'}).append(popup);
-  $('body').append(overlay);
-  $('.cancel-btn').on('click', function() {
-    $('.confirm-overlay').remove();
-  })
-  $('.confirm-overlay').on('click', function() {
-    $('.confirm-overlay').remove();
-  })
-  $('.confirm-btn').on('click', function() {
-    onConfirm();
-    $('.confirm-overlay').remove();
+function confirmPopup(message, onConfirm, onCancel=()=>{}) {
+  return new Promise((resolve, reject) => {
+    var popup = '<div class="popup">\n'+
+      '<p class="heading">'+message+'</p>\n'+
+      '<a class="btn cancel-btn">Cancel</a>'+
+      '<a class="btn confirm-btn right">Confirm</a></div>'
+    var overlay = $('<div/>', {class: 'confirm-overlay'}).append(popup);
+    $('body').append(overlay);
+    $('.cancel-btn').on('click', function() {
+      $('.confirm-overlay').remove();
+      resolve(onCancel());
+    })
+    $('.confirm-overlay').on('click', function() {
+      $('.confirm-overlay').remove();
+      resolve(onCancel());
+    })
+    $('.confirm-btn').on('click', function() {
+      $('.confirm-overlay').remove();
+      resolve(onConfirm());
+    })
   })
 }
 
@@ -228,4 +269,5 @@ $(document).ready( function() {
   initializeInviteLinks();
   setupDeleteButton();
   setupUserButton();
+  initClassUpdate();
 })

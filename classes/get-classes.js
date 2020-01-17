@@ -45,6 +45,7 @@ function init(app) {
     classDB.getClassSchoolDataFromID(id).then(classObj => {
       if (classObj) {
         // Sets the locals variable classObj
+        classObj.schoolData.isPublic = (classObj.schoolData.schoolNum == 0);
         res.locals.classObj = classObj
         next();
       } else {
@@ -60,16 +61,15 @@ function init(app) {
   // Get class with given id
   app.get('/:classid/home', (req, res) => {
     let classID = req.params.classid;
-    let classObj = res.locals.classObj;
     if (req.isAuthenticated()) {
       console.log(`[LOG] get-classes: Checking enroll status of ${req.user.data.username}`)
       // Show additional menus if authorized
       classDB.enrollStatus(req.user.data.username, classID).then(userStatus => {
-        classObj.userStatus = userStatus;
-        res.render('class-homepage-auth', classObj);
+        res.locals.classObj.userStatus = userStatus;
+        res.render('class-homepage-auth');
       });
     } else {
-      res.render('class-homepage', classObj);
+      res.render('class-homepage');
     }
   });
   
@@ -79,10 +79,9 @@ function init(app) {
     // Class ID must be non-empty and alphanumeric
     let classObj = res.locals.classObj;
     classDB.enrollStatus(req.user.data.username, classID).then(userStatus => {
-      classObj.userStatus = userStatus;
+      res.locals.classObj.userStatus = userStatus;
       if (userStatus.enrolled) {
         assignDB.getAllAssignments(classID).then(assignObj => {
-          assignObj.classObj = classObj;
           assignObj.assignments.forEach(tempAssign => {
             tempAssign.isAuthor = (tempAssign.author == req.user.id);
           })
@@ -99,10 +98,9 @@ function init(app) {
     let classID = req.params.classid;
     let classObj = res.locals.classObj;
     classDB.enrollStatus(req.user.data.username, classID).then(userStatus => {
-      classObj.userStatus = userStatus;
+      res.locals.classObj.userStatus = userStatus;
       if (userStatus.admin) {
         assignDB.getAllAssignments(classID).then(assignObj => {
-          assignObj.classObj = classObj;
           assignObj.username = req.user.data.username;
           res.render('class-dashboard-admin', assignObj);
         })

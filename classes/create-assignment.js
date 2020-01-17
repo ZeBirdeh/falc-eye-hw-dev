@@ -19,8 +19,8 @@ function init(app) {
   app.post('/:classid/item/new', authMiddleware(), (req, res) => {
     let classID = req.params.classid;
     let classObj = res.locals.classObj;
-    classDB.enrollStatus(req.user.data.username, classID).then(userStats => {
-      if (!(userStats.admin) && !(userStatus.enrolled && classObj.post_perm)) {
+    classDB.enrollStatus(req.user.data.username, classID).then(userStatus => {
+      if (!(userStatus.admin) && !(userStatus.enrolled && classObj.post_perm)) {
         console.log('[LOG] create-assignment: No permissions');
         // No permissions
         res.redirect('/classes/' + classID + '/item/new?e=2');

@@ -64,7 +64,7 @@ function initPassport() {
             return done(null, false);
           }
           console.log(`Succesfully logged in ${username}`);
-          memoryStore.set(doc.id, {id: doc.id, data: docData}, err => {console.log(err)})
+          memoryStore.set(doc.id, {id: doc.id, data: docData}, err => {if(err){console.log(err)}})
           return done(null, doc);
         });
       }).catch((err) => {
@@ -215,7 +215,9 @@ function init(app) {
   app.use(passport.session());
   // Put auth status in locals object
   app.use((req, res, next) => {
-    res.locals.isAuthenticated = req.isAuthenticated();
+    if (req.isAuthenticated()) {
+      res.locals.userData = { isAuthenticated: true, username: req.user.data.username };  
+    }
     next();
   })
 }

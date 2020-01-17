@@ -9,10 +9,7 @@ function init(app) {
       console.log("[LOG] profile: Rendering profile page with data");
       profileData.hasClasses = (profileData.classes.length > 0)
       profileData.layout = 'main-user-header';
-      profileData.userData = {
-        username: req.user.data.username,
-        created: req.user.data.created
-      }
+      profileData.userCreated = req.user.data.created
       res.render('profile', profileData);
     });
   });

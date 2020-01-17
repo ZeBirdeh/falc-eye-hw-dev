@@ -25,10 +25,11 @@
       <div class="dropdown-details">
         <div class="all-padded">
           <p>Group name</p>
-          <input autocomplete="off" val="{{classObj.name}}"/>
+          <input id="class-name" autocomplete="off" value="{{classObj.name}}"/>
           <p>Description</p>
-          <textarea class="large-input" autocomplete="off">{{classObj.description}}</textarea>
-          <a class="btn update-btn">Save changes</a>
+          <textarea id="class-description" class="large-input" autocomplete="off">{{classObj.description}}</textarea>
+          <p class="small"><span id="charcount">2000</span> characters left</p>
+          <a class="btn update-btn" id="update-btn">Save changes</a>
         </div>
       </div>
     </div>

@@ -5,18 +5,25 @@ var db = admin.firestore();
 // Takes in classObj where the 'school' field should be the name of the school document
 function createClass(classObj) {
   let result = getSchool(classObj.school).then(schoolDoc => {
-    if (schoolDoc === null) {
+    if (!schoolDoc) {
       // School does not exist
       return;
     }
     let addDoc = db.collection('classes').add({
       name: classObj.name,
       description: classObj.description,
-      school: db.doc('schools/'+schoolDoc.id)
+      school: db.doc('schools/'+schoolDoc.id),
+      post_perm: classObj.post_perm
     });
     return addDoc;
   })
   return result
+}
+
+function updateClass(classID, name, desc) {
+  let classDoc = db.collection('classes').doc(classID);
+  let update = classDoc.update({name: name, description: desc});
+  return update;
 }
 
 function getClassFromID(classID) {
@@ -79,7 +86,7 @@ function getSchool(schoolName) {
   let schoolRef = db.collection('schools');
   let schoolDoc = schoolRef.where('name', '==', schoolName).get().then(snapshot => {
     if (snapshot.empty) {
-      return null;
+      return;
     }
     var schools = [];
     snapshot.forEach(doc => {
@@ -88,7 +95,7 @@ function getSchool(schoolName) {
     if (schools.length > 0) {
       return schools[0];
     } else {
-      return null;
+      return;
     }
   })
   return schoolDoc;
@@ -218,7 +225,7 @@ function removeUser(username, classID) {
 function getNumClassInvites(classID) {
   let inviteRef = db.collection('invites');
   let sizeProm = inviteRef.where('class', '==', classID).get().then(snapshot => {
-    return snapshot.size();
+    return snapshot.size;
   })
   return sizeProm;
 }
@@ -296,6 +303,7 @@ function cleanAlpha(inputStr) {
 
 module.exports = {
   createClass: createClass,
+  updateClass: updateClass,
   getClassFromID: getClassFromID,
   getClassSchoolDataFromID: getClassSchoolDataFromID,
   getClasses: getClasses,

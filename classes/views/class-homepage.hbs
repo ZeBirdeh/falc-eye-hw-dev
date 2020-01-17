@@ -3,9 +3,9 @@
 {{/section}}
 {{> sidebar this }}
 <div class="content">
-<h3 class="pagetitle">{{name}} - Homepage</h3>
-<p><a href="/classes/school/{{schoolData.schoolnum}}">
-See other classes from {{schoolData.schoolname}}</a></p>
-<p>Class information</p>
-<p>{{description}}</p>
+<p class="title">{{classObj.name}} - Homepage</p>
+<p><a href="/classes/school/{{classObj.schoolData.schoolnum}}">
+See other classes from {{classObj.schoolData.name}}</a></p>
+<p class="heading">Class information</p>
+<p>{{classObj.description}}</p>
 </div>

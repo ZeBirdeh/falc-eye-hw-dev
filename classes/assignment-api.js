@@ -128,17 +128,44 @@ function init(app) {
       res.json({status: 'invalid'});
       return;
     }
-    new Promise(genToken).then(validToken => {
-      console.log('[LOG] assignment-api: Valid token generated')
-      classDB.addInviteLink(classID, expires, validToken).then(inviteDoc => {
-        console.log(`[LOG] get-classes: New invite link ${validToken} for ${classID}`);
-        res.json({status: 'success', invite:{id: validToken, expires: expires}});
-      })
-    }).catch(err => {
-      console.error(err);
-      res.json({status: 'error'});
+    classDB.getNumClassInvites(classID).then(numInvites => {
+      if (numInvites < 5) {
+        new Promise(genToken).then(validToken => {
+          console.log('[LOG] assignment-api: Valid token generated')
+          classDB.addInviteLink(classID, expires, validToken).then(inviteDoc => {
+            console.log(`[LOG] get-classes: New invite link ${validToken} for ${classID}`);
+            res.json({status: 'success', invite:{id: validToken, expires: expires}});
+          })
+        }).catch(err => {
+          console.error(err);
+          res.json({status: 'error'});
+        })
+      } else {
+        res.json({status: 'failed'})
+      }
     })
   });
+
+  app.post('/api/:classid/update-data', adminMiddleware, (req, res) => {
+    let name = req.body.name;
+    let desc = req.body.description;
+    let classID = req.params.classid;
+    if (!name || !desc) {
+      res.json({status: 'invalid'});
+      return;
+    }
+    if ((desc.length > 2050) || (name.length > 200)) {
+      res.json({status: 'invalid'});
+      return;
+    }
+    classDB.updateClass(classID, name, desc).then(ref => {
+      if (!ref) {
+        res.json({status: 'error'});
+        return;
+      }
+      res.json({status: 'success'});
+    });
+  })
 
   app.get('/api/:classid/get-users', adminMiddleware, (req, res) => {
     let startName = req.body.startName;
@@ -174,6 +201,22 @@ function init(app) {
       res.json({status: 'invalid'});
       return;
     }
+    let classID = req.params.classid;
+    classDB.removeUser(username, classID).then(result => {
+      if (!result) {
+        res.json({status: 'failure'});
+        return;
+      }
+      res.json({status: 'success'});
+    })
+  })
+
+  app.post('/api/:classid/leave-user', (req, res) => {
+    if (!req.isAuthenticated()) {
+      res.json({status: 'unauthenticated'});
+      return;
+    }
+    let username = req.user.data.username;
     let classID = req.params.classid;
     classDB.removeUser(username, classID).then(result => {
       if (!result) {

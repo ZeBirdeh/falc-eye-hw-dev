@@ -3,7 +3,8 @@
   <a href="/updates">Updates</a>
   <a href="/guide">Guide</a>
   <div class="navbar-right">
-    {{#if isAuthenticated}}
+    {{#if userData.isAuthenticated}}
+    <a class="no-hover">{{userData.username}}</a>
     <a id="nav-btn"><div class="menu-icon">
       <div class="icon-bar"></div>
       <div class="icon-bar"></div>
@@ -16,8 +17,10 @@
     {{/if}}
   </div>
 </div>
-{{#if isAuthenticated}}
+{{#if userData.isAuthenticated}}
 <div class="navmenu hidden" id="dropdown-nav">
+  <a href="/user-feed/current">Your feed</a>
+  <a href="/classes/form/new">New class</a>
   <a href="/logout">Sign out</a>
 </div>
 {{/if}}

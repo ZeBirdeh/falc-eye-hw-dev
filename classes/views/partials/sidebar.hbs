@@ -3,7 +3,14 @@
   <p class="heading">Class Menu</p>
   <a href="/classes/{{classID}}/home">Class Home</a>
   <a href="/classes/{{classID}}/feed">Class Feed</a>
+  {{#if classObj.userStatus.admin}}
+  <a href="/classes/{{classID}}/settings">Manage Class</a>
+  {{/if}}
+  {{#if classObj.post_perm}}
   <a href="/classes/{{classID}}/item/new">New Assignment</a>
+  {{else if classObj.userStatus.admin}}
+  <a href="/classes/{{classID}}/item/new">New Assignment</a>
+  {{/if}}
   <p></p>
   {{/if}}
   <p class="heading">All</p>

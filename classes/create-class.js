@@ -12,18 +12,20 @@ function init(app) {
     let className = req.body.name;
     let classDesc = req.body.description;
     let classSchool = req.body.school;
+    let classPerms = (req.body.postperm == '1');
     if (!className || !classDesc || !classSchool) {
       console.log('[LOG] create-class: Invalid input given');
       res.redirect('/classes/form/new?e=1')
     }
-    if ((classDesc.length > 2000) || (className.length > 200)) {
+    if ((classDesc.length > 2050) || (className.length > 200)) {
       console.log('[LOG] create-class: Invalid input given');
       res.redirect('/classes/form/new?e=1');
       return;
     }
-    let classObj = {name: className, description: classDesc, school: classSchool};
+    let classObj = {name: className, description: classDesc, school: classSchool, post_perm: classPerms};
+    //console.log(JSON.stringify(classObj))
     classDB.createClass(classObj).then(ref => {
-      if (ref === null) {
+      if (!ref) {
         console.log('[LOG] create-class: Invalid input given');
         res.redirect('/classes/form/new?e=1');
       } else {
@@ -32,6 +34,9 @@ function init(app) {
           res.redirect('/classes/' + ref.id + '/home');
         });
       }
+    }).catch(err => {
+      console.error(err);
+      res.redirect('/classes/form/new?e=1');
     });
   });
 }

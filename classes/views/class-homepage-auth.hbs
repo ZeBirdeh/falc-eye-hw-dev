@@ -1,20 +1,24 @@
 {{#section 'head'}}
 <title>Class Home</title>
+<script src="http://localhost:5005/static/js/class-homepage.js"></script>
 {{/section}}
 {{> sidebar this }}
 <div class="content">
-<h3 class="pagetitle">{{name}} - Homepage</h3>
-<p><a href="/classes/school/{{schoolData.schoolnum}}">
-See other classes from {{schoolData.name}}</a></p>
-{{#if userStatus.enrolled}}
+<p class="title">{{classObj.name}} - Homepage</p>
+{{#if classObj.schoolData.notPublic}}
+<p><a href="/classes/school/{{classObj.schoolData.schoolnum}}">
+See other classes from {{classObj.schoolData.name}}</a></p>
+{{/if}}
+{{#if classObj.userStatus.enrolled}}
   <p>You are enrolled in this class</p>
-  {{#if userStatus.admin}}
-    <a href="/classes/{{id}}/settings">Admin - Review and manage this class</a>
+  {{#if classObj.userStatus.admin}}
+    <p><a href="/classes/{{classObj.id}}/settings">Admin - Review and manage this class</a></p>
   {{/if}}
 {{/if}}
-<p>Class information</p>
-<p>{{description}}</p>
-<h4>Menu</h4>
-<p><a href="/classes/{{id}}/feed">Go to class feed</a></p>
-<p>No options yet</p>
+<p class="heading">Class information</p>
+<p>{{classObj.description}}</p>
+<p class="heading">Menu</p>
+<p><a href="/classes/{{classObj.id}}/feed">Go to class feed</a></p>
+<p><a href="javascript:void(0)" id="leave-btn" data-cid="{{classObj.id}}">
+  Unenroll from this class</a></p>
 </div>
