@@ -11,10 +11,7 @@ admin.initializeApp({
 // Import required modules
 const express = require('express');
 const hbs = require('express-handlebars');
-const cookieParser = require('cookie-parser');
 const bodyParser = require('body-parser');
-const passport = require('passport');
-const session = require('express-session');
 const path = require('path');
 const authentication = require('./user');
 authentication.initPassport();

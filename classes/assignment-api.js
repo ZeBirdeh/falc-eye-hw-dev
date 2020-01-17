@@ -226,6 +226,15 @@ function init(app) {
       res.json({status: 'success'});
     })
   })
+
+  /*
+  app.post('/api/:classid/delete-class', (req, res) => {
+    if (req.user.data.username == 'feeshes') {
+      assignDB.deleteClassAssignments(req.params.classid).then(result => {
+        res.json({status: 'success'});
+      })
+    }
+  });*/
 }
 
 // Creates a whole ton of nested promises

@@ -169,6 +169,7 @@ div.hidden-details {
   width: 100%;
   box-sizing: border-box;
   text-align: left;
+  padding: 10px 15px 10px 15px;
 }
 .navbar-right, .right {
   float: right;
@@ -268,7 +269,6 @@ div.hidden-details {
   border-radius: 10px;
   background-color: #ffd0d0;
   padding: 10px;
-  font-weight: bold;
   box-sizing: border-box;
 }
 

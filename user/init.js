@@ -53,6 +53,9 @@ function initPassport() {
         if (!docData.verified) {
           return done(null, false);
         }
+        if (docData.ban_until > Math.floor(Date.now() / 1000)) {
+          return done(null, false);
+        }
 
         bcrypt.compare(password, docData.password, (err, isSame) => {
           if (err) {
@@ -76,8 +79,31 @@ function initPassport() {
 }
 
 function initUser(app) {
-  app.post('/login', passport.authenticate('local', { failureRedirect: '/login?e=1' }),
-  function(req, res) {
+  app.post('/login', (req, res, next) => {
+    // Check info first to return custom error message
+    let username = req.body.username;
+    if (!username) { 
+      res.redirect('/login?e=1');
+      return;
+    }
+    authUserDB.getUsers(username).then(doc => {
+      var docData = doc.data();
+      if (!docData) {
+        res.redirect('/login?e=1');
+        return;
+      }
+      if (!docData.verified) {
+        res.redirect('/login?e=2');
+        return;
+      }
+      if (docData.ban_until > Math.floor(Date.now() / 1000)) {
+        res.redirect('/login?e=3');
+        return;
+      }
+      // Pass the request to the passport authenticator
+      passport.authenticate('local', { failureRedirect: '/login?e=1' })(req, res, next);
+    })
+  }, (req, res) => {
     req.session.user = req.session.passport.user;
     req.session.save(function(err) {
       // session saved

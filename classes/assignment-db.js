@@ -47,8 +47,41 @@ function createAssignment(classID, assignObj) {
 // Delete an assignment
 function deleteAssignment(classID, assignID) {
   let assignDoc = db.collection('classes').doc(classID).collection('assignments').doc(assignID);
+  let docDeletes = deleteInteractions(assignDoc);
   let deleteDoc = assignDoc.delete();
   return deleteDoc;
+}
+
+// Delete all interactions for a specific deleted assignment
+function deleteInteractions(assignDoc) {
+  let interRef = db.collection('interactions');
+  return interRef.where('assignment', '==', assignDoc).get().then(snapshot => {
+    let docDeletes = [];
+    snapshot.forEach(interDoc => {
+      docDeletes.push(interRef.doc(interDoc.id).delete());
+    })
+    return docDeletes;
+  })
+}
+
+// Delete class, including all assignments, interactions, and enrollments of class
+function deleteClassAssignments(classID) {
+  let classDoc = db.collection('classes').doc(classID);
+  let assignRef = classDoc.collection('assignments');
+  let enrollRef = db.collection('class-enrollment');
+  return assignRef.get().then(snapshot => {
+    snapshot.forEach(assignSnap => {
+      let assignDoc = assignRef.doc(assignSnap.id);
+      deleteInteractions(assignDoc);
+      assignDoc.delete();
+    })
+    enrollRef.where('class', '==', classDoc).get().then(snapshot2 => {
+      snapshot2.forEach(enrollSnap => {
+        enrollRef.doc(enrollSnap.id).delete();
+      })
+      classDoc.delete();
+    })
+  })
 }
 
 // Update completion if done
@@ -115,6 +148,7 @@ module.exports = {
   getAllAssignments: getAllAssignments,
   createAssignment: createAssignment,
   deleteAssignment: deleteAssignment,
+  deleteClassAssignments: deleteClassAssignments,
   getAssignmentStatus: getAssignmentStatus,
   addAssignmentView: addAssignmentView,
   setAssignmentCompletion: setAssignmentCompletion
