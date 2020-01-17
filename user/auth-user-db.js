@@ -118,11 +118,99 @@ function getClasses(username) {
     return getDoc;
   }
   
+// Take in a user, userID, and mode and return all the classes and assignments
+// mode can be nonexpired, incomplete
+function getAssignmentsByUser(username, userID, mode='nonexpired') {
+  var userRef = db.collection('class-enrollment');
+  var getDoc = userRef.where('username', '==', username).get().then(snapshot => {
+    if (snapshot.empty) {
+      console.log('[LOG] user-db: No enrolled classes');
+      return {classes: []};
+    }
+    // Produce an array of promises to chain together in order to return only
+    // after all data from each document in the snapshot is pushed to an array
+    var dataGetPromises = [];
+    var assignmentPromises = [];
+    snapshot.forEach(doc => {
+      var docData = doc.data();
+      if (docData.class && !docData.hidden && !docData.banned) {
+        // Push class data promises
+        dataGetPromises.push(docData.class.get());
+        let tempRef = docData.class.collection('assignments');
+        let assignRef = null;
+        // If we are getting assignments, push assignment promise based on mode
+        if (mode == 'nonexpired') {
+          // Could return just ...).get() doc snapshot but need to prep data
+          assignRef = tempRef.where('expires', '>', Math.floor(Date.now() / 1000)).get().then(assignSnap => {
+            let assignObjs = [];
+            assignSnap.forEach(assignDoc => {
+              // Prepare data to return
+              let assignObj = assignDoc.data();
+              assignObj.id = assignDoc.id;
+              assignObj.classID = docData.class.id;
+              assignObjs.push(assignObj);
+            })
+            return assignObjs;
+          });
+          assignmentPromises.push(assignRef);
+        } else if (mode == 'incomplete') {
+          assignRef = tempRef.get().then(assignSnapshot => {
+            // For each assignment in the class, get its completion
+            let completionPromises = [];
+            assignSnapshot.forEach(assignDoc => {
+              // Prepare data to return
+              let assignObj = assignDoc.data();
+              assignObj.id = assignDoc.id;
+              assignObj.classID = docData.class.id;
+              // Push a promise with assignment doc if it is incomplete, null if not
+              let tempAssignDoc = tempRef.doc(assignDoc.id);
+              let userDoc = db.collection('users').doc(userID);
+              let interRef = db.collection('interactions').where('assignment', '==', tempAssignDoc).where('user', '==', userDoc)
+              let compPromise = interRef.get().then(compSnapshot => {
+                if (compSnapshot.empty) { return assignObj; }
+                var compResults = [];
+                compSnapshot.forEach(doc => { compResults.push(doc.get('completion')); });
+                if (compResults[0] < 100) { return assignObj; }
+              })
+              completionPromises.push(compPromise);
+            });
+            return Promise.all(completionPromises);
+          })
+          assignmentPromises.push(assignRef);
+        }
+      }
+    });
+    var resultsPromise = Promise.all(dataGetPromises).then(promiseResults => {
+      let userClasses = [];
+      promiseResults.forEach(classesDoc => {
+        userClasses.push({id: classesDoc.id, name: classesDoc.get('name')});
+      });
+      return userClasses;
+    })
+    let assignmentsPromise = Promise.all(assignmentPromises).then(promiseResults => {
+      let userAssigns = [];
+      promiseResults.forEach(assignGroup => {
+        assignGroup.forEach(assignDoc => {
+          if (assignDoc) { 
+            userAssigns.push(assignDoc)
+          }
+        });
+      });
+      return userAssigns;
+    });
+    return Promise.all([resultsPromise, assignmentsPromise]);
+  }).catch(err => {
+    console.log('[WARN] user-db: Error getting documents', err);
+    return null;
+  });
+  return getDoc;
+}
 
 module.exports = {
-    getUsers: getUsers,
-    getUserById: getUserById,
-    createUser: createUser,
-    verifyUser: verifyUser,
-    getClasses: getClasses
+  getUsers: getUsers,
+  getUserById: getUserById,
+  createUser: createUser,
+  verifyUser: verifyUser,
+  getClasses: getClasses,
+  getAssignmentsByUser: getAssignmentsByUser
 }

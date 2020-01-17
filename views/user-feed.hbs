@@ -1,0 +1,84 @@
+{{#section 'head'}}
+<title>Class Feed</title>
+<script src="http://localhost:5005/static/js/class-feed.js"></script>
+<script src="http://localhost:5005/static/js/user-feed.js"></script>
+{{/section}}
+{{> sidebar this }}
+<div class="content">
+<p class="title">Personal Feed</p>
+<p id="alerts"></p>
+<p>Showing {{#if feedincomplete}}Incomplete{{else if feedcurrent}}Current{{else}}All{{/if}} Items</p>
+<p class="heading">Total remaining workload: <span class="num-display" id="twl"></span></p>
+<p class="heading">Outstanding assignments</p>
+<div class="assignments">
+<ul>
+  {{#each assignments}}
+  <li>
+    <div class="assignment" data-aid="{{id}}" data-cid="{{classID}}" data-max="{{workload}}">
+      <div class="dropdown-trigger">
+        <div class="all-padded">
+          <p class="title">{{title}}</p>
+          <p class="small">Created on <span name="time">{{created}}</span></p>
+          <p>Class: <span class="class-disp"></span></p>
+          <p>Expected workload: <span class="progress-disp"></span>
+            <span name="load">{{workload}}</span>
+          </p>
+        </div>
+      </div>
+      <div class="dropdown-details">
+        <div class="all-padded">
+          <span class="small">Description:</span>
+          <p>{{description}}</p>
+          <p class="small">Current progress:</p>
+          <div class="large-col slide-container">
+            <input type="range" value="0" class="slider">
+          </div>
+          <div class="sm10-col">
+            <p class="num-display">0</p>
+          </div>
+          <div class="sm15-col">
+            <a class="btn update-btn disabled">Update</a>
+          </div>
+        </div>
+      </div>
+      <div class="all-padded">
+        <p>Due <span name="time">{{expires}}</span></p>
+        {{#if isAuthor}}
+          <a class="btn edit-btn disabled">Edit assignment details</a>
+          <span class="small">(You are the author of this assignment)</span>
+        {{/if}}
+      </div>
+    </div>
+  </li>
+  {{/each}}
+</ul>
+</div>
+<hr width="80%">
+<p class="heading">Completed assignments</p>
+<div class="completed-assignments">
+<ul>
+</ul>
+</div>
+<hr width="80%">
+<p class="heading">Your classes</p>
+<ul>
+{{#each classes}}
+<li data-cidref="{{id}}" data-name="{{name}}"><a href="/classes/{{id}}/home">{{name}}</a></li>
+{{/each}}
+</ul>
+<h4>Menu</h4>
+<p>No options yet</p>
+</div>
+<script>
+  twl = 0
+  document.getElementsByName("load").forEach(elt => {
+    tempn = parseFloat(elt.innerHTML)
+    if (!isNaN(tempn)) {twl = twl + tempn}
+  })
+  document.getElementById("twl").innerHTML = twl
+</script>
+<script>
+  document.getElementsByName("time").forEach(elt => {
+    elt.innerHTML = new Date(parseInt(elt.innerHTML)*1000).toLocaleString()
+  })
+</script>

@@ -179,6 +179,7 @@ function getEnrolledSortByName(classID, startAt, limit=20) {
   return aDoc;
 }
 
+
 function banUser(username, classID) {
   let classDoc = db.collection('classes').doc(classID);
   let enrollmentRef = db.collection('class-enrollment');
