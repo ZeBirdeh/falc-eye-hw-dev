@@ -89,8 +89,9 @@ function setupUpdateButton() {
     setAssignmentCompletion(classID, assignID, rangeVal).then(status => {
       if (status.status == 'success') {
         createPopup('Update successful!');
+        updateTotalWorkload();
         var maxVal = $assignmentObj.attr('data-max');
-        $assignmentObj.find('.progress-disp').text(Math.round(rangeVal / 100 * maxVal) + ' / ');
+        $assignmentObj.find('.progress-disp').html('Progress: <span name="prog-num">' + Math.round(rangeVal / 100 * maxVal) + '</span> / ');
         if (rangeVal >= 100) {
           $assignmentObj.attr('comp-assign', '');
           $rangeInput.attr('value', '100');
@@ -109,32 +110,49 @@ function setupUpdateButton() {
   })
 }
 
+function updateTotalWorkload() {
+  twl = 0
+  $('[name="load"]').each(function() {
+    tempn = parseFloat($(this).text())
+    if (!isNaN(tempn)) {twl = twl + tempn}
+  })
+  $('[name="prog-num"]').each(function() {
+    tempn = parseFloat($(this).text())
+    if (!isNaN(tempn)) {twl = twl - tempn}
+  })
+  $("#twl").text(twl)
+}
+
 function formatCompletionOnLoad() {
+  let promList = [];
   $('.assignment').each( function() {
     var $this = $(this);
     var assignID = $this.attr('data-aid');
     var classID = $this.attr('data-cid');
-    getAssignmentStatus(classID, assignID).then(result => {
+    promList.push(getAssignmentStatus(classID, assignID).then(result => {
       if (result.status == 'new') { // Add new property
         $this.attr('new-assign', '');
       } else if (result.status == 'viewed') { // Initialize slider and text values
         var maxVal = $this.attr('data-max');
         $this.find('.slider').attr('value', result.completion);
         $this.find('.num-display').text(Math.round(result.completion / 100 * maxVal));
-        $this.find('.progress-disp').text(Math.round(result.completion / 100 * maxVal) + ' / ');
+        $this.find('.progress-disp').html('Progress: <span name="prog-num">' 
+          + Math.round(result.completion / 100 * maxVal) + '</span> / ');
       } else if (result.status == 'completed') { // Initialize values and move box, then reset sliders
         var maxVal = $this.attr('data-max');
         $this.attr('comp-assign', '');
         $this.find('.slider').attr('value', '100').css('filter', 'hue-rotate(60deg)');
         $this.find('.num-display').text(maxVal);
+        $this.find('.progress-disp').html('Progress: <span name="prog-num">' + maxVal + '</span> / ');
         var $assignmentListItem = $this.parent().detach();
         var $comp = $('.completed-assignments').children().first('ul');
         $comp.prepend($assignmentListItem)
       } else {
         /* Some error happend with getting the status */
       }
-    })
+    }))
   });
+  return Promise.all(promList);
 }
 
 // Document on ready function
@@ -142,7 +160,9 @@ function formatCompletionOnLoad() {
 $(document).ready(function() {
   minimizeDetails();
   setupRangeSlider($('.slider'));
-  formatCompletionOnLoad();
+  formatCompletionOnLoad().then(result => {
+    updateTotalWorkload();
+  });
   setupUpdateButton();
 });
 

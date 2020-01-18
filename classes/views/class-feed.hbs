@@ -14,7 +14,7 @@
 {{/if}}
 <p id="alerts"></p>
 <p>All Items</p>
-<p>Total remaining workload: <span id="twl"></span></p>
+<p class="heading">Total remaining workload: <span id="twl"></span></p>
 <p class="heading">Outstanding assignments</p>
 <div class="assignments">
 <ul>
@@ -25,7 +25,7 @@
         <div class="all-padded">
           <p class="title">{{title}}</p>
           <p class="small">Created on <span name="time">{{created}}</span></p>
-          <p>Expected workload: <span class="progress-disp"></span>
+          <p><span class="progress-disp">Expected workload: </span>
             <span name="load">{{workload}}</span>
           </p>
         </div>
@@ -65,14 +65,6 @@
 </ul>
 </div>
 </div>
-<script>
-  twl = 0
-  document.getElementsByName("load").forEach(elt => {
-    tempn = parseFloat(elt.innerHTML)
-    if (!isNaN(tempn)) {twl = twl + tempn}
-  })
-  document.getElementById("twl").innerHTML = twl
-</script>
 <script>
   document.getElementsByName("time").forEach(elt => {
     elt.innerHTML = new Date(parseInt(elt.innerHTML)*1000).toLocaleString()

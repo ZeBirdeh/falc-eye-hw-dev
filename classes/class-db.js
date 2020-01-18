@@ -222,10 +222,16 @@ function removeUser(username, classID) {
 }
 
 // Gets all invite links corresponding to a class
+// Also deletes all expired invites
 function getNumClassInvites(classID) {
   let inviteRef = db.collection('invites');
   let sizeProm = inviteRef.where('class', '==', classID).get().then(snapshot => {
-    return snapshot.size;
+    let numInvites = 0;
+    snapshot.forEach(inviteDoc => {
+      if (inviteDoc.get('expires') > Math.floor(Date.now() / 1000)) { numInvites = numInvites + 1 }
+      else { inviteRef.doc(inviteDoc.id).delete() };
+    })
+    return numInvites;
   })
   return sizeProm;
 }
