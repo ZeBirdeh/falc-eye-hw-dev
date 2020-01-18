@@ -17,7 +17,7 @@ const grecaptchaAccount = require('../../falc-eye-hw-grecaptcha-rg2qm9fd0.json')
 const LOGIN_REDIRECT = '/profile';
 const SECRET_KEY = require('../../falc-eye-hw-invite-key-ou6pw5e5.json').secret;
 const changelogFile = fs.readFileSync(path.join(__dirname, '..', '..', 'CHANGELOG.txt'));
-const HOST = 'http://18.214.113.32'
+const HOST = 'http://falkai.xyz'
 
 const OAuth2 = google.auth.OAuth2;
 const oauth2Client = new OAuth2(
