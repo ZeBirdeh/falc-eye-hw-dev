@@ -53,17 +53,17 @@
     <ul>
         {{#each assignments}}
         <li>
-          <div class="assignment" data-aid="{{id}}" data-cid="{{classID}}" data-max="{{workload}}">
+          <div class="assignment small" data-aid="{{id}}" data-cid="{{classID}}" data-max="{{workload}}">
             <div class="dropdown-trigger">
               <div class="all-padded">
-                <p class="title">{{title}}</p>
-                <p class="small">Created on <span name="time">{{created}}</span></p>
+                <p class="heading">{{title}}</p>
+                <p>Created on <span name="time">{{created}}</span></p>
                 <p>Expected workload: <span name="load">{{workload}}</span></p>
               </div>
             </div>
             <div class="dropdown-details">
               <div class="all-padded">
-                <span class="small">Description:</span>
+                <span>Description:</span>
                 <p>{{description}}</p>
               </div>
             </div>
@@ -71,7 +71,7 @@
               <p>Due <span name="time">{{expires}}</span></p>
               {{#if isAuthor}}
                 <a class="btn edit-btn disabled">Edit assignment details</a>
-                <span class="small">(You are the author of this assignment)</span>
+                <span>(You are the author of this assignment)</span>
               {{/if}}
             </div>
           </div>

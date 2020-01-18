@@ -1,6 +1,7 @@
 {{#section 'head'}}
 <title>Create new assignment</title>
 <script src="http://localhost:5005/static/js/create-assignment-jquery.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.1/jquery.validate.min.js"></script>
 {{/section}}
 {{> sidebar this }}
 <div class="content">
@@ -9,17 +10,32 @@
 <p>{{description}}</p>
 <h4>Create new assignment</h4>
 
-<div class="assignment-form">
+<div class="assignment-form large-col">
 <form method="post" id="form">
-  <input name="title" id="title" type="text" maxlength="200" placeholder="Title" required />
-  <textarea class="large-input" name="description" id="description" type="text" maxlength="2000" placeholder="Type a short description here" required></textarea>
-  <p class="small"><span id="charcount">2000</span> characters left</p>
   <div class="large-col">
-    <input name="workload" id="workload" type="range" class="slider" min="0" max="100" value="50"/>
+    <input name="title" id="title" type="text" maxlength="200" placeholder="Title" required />
   </div>
-  <div class="small-col"><p class="num-display" click-editable><span id="worknum">50</span></p></div>
-  <input name="duedate" id="duedate" type="number" required />
-  <a class="btn submit-btn" id="submit-form">Submit</a>
+  <div class="small-col all-padded emphasized">Title</div>
+  <div class="large-col">
+    <textarea class="large-input" name="description" id="description" type="text" maxlength="2000" placeholder="Type a short description here" required></textarea>
+    <p class="small"><span id="charcount">2000</span> characters left</p>
+  </div>
+  <div class="small-col all-padded emphasized">Description</div>
+  <div class="large-col">
+    <div class="large-col">
+      <input name="workload" id="workload" type="range" class="slider" min="0" max="100" value="50"/>
+    </div>
+    <div class="small-col"><p class="num-display" id="worknum" click-editable>50</p></div>
+  </div>
+  <div class="small-col all-padded emphasized">Workload</div>
+  <div class="large-col">
+    <input name="duedate" id="duedate" type="datetime-local" max="9999-12-31T23:59" required/>
+  </div>
+  <div class="small-col all-padded emphasized">Due date</div>
+  <div class="large-col">
+    <a class="btn submit-btn" id="submit-form">Submit</a>
+  </div>
+  <div class="small-col"></div>
 </form>
 </div>
 </div>
