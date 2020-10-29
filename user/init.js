@@ -10,15 +10,21 @@ const cookieParser = require('cookie-parser');
 const request = require('request');
 const fs = require('fs');
 const path = require('path');
-const memoryStore = require('./memory-store-db.js');
-const redisStore = require('./redis-db.js');
+//const memoryStore = require('./memory-store-db.js');
+//const redisStore = require('./redis-db.js');
+const passportStore = require('./store-db.js');
 
 const apiAccount = require('../../falc-eye-hw-google-api-u5kt7grp.json');
 const grecaptchaAccount = require('../../falc-eye-hw-grecaptcha-rg2qm9fd0.json');
 const LOGIN_REDIRECT = '/profile';
 const SECRET_KEY = require('../../falc-eye-hw-invite-key-ou6pw5e5.json').secret;
 const changelogFile = fs.readFileSync(path.join(__dirname, '..', '..', 'CHANGELOG.txt'));
-const HOST = 'https://falkai.xyz'
+
+let HOST = 'https://falkai.xyz';
+if (process.env.NODE_ENV !== 'production') {
+  HOST = 'localhost:5005';
+}
+
 
 const OAuth2 = google.auth.OAuth2;
 const oauth2Client = new OAuth2(
@@ -41,7 +47,7 @@ function initPassport() {
     //authUserDB.getUserById(userid).then(doc => {
     //    done(null, doc);
     //  });
-    memoryStore.get(userid, (err, session) => {done(null, session)});
+    passportStore.get(userid, (err, session) => {done(null, session)});
   });
 
   passport.use(new LocalStrategy(
@@ -68,7 +74,7 @@ function initPassport() {
             return done(null, false);
           }
           console.log(`Succesfully logged in ${username}`);
-          memoryStore.set(doc.id, {id: doc.id, data: docData}, err => {if(err){console.log(err)}})
+          passportStore.set(doc.id, {id: doc.id, data: docData}, err => {if(err){console.log(err)}})
           return done(null, doc);
         });
       }).catch((err) => {
@@ -212,29 +218,13 @@ function initUser(app) {
       res.redirect('/');
     }
   });
-
-  app.get('/guide', (req, res) => {
-    res.render('guide');
-  })
-
-  app.get('/about', (req, res) => {
-    res.render('about');
-  })
-
-  app.get('/new-user', (req, res) => {
-    res.render('new-user');
-  })
-
-  app.get('/updates', (req, res) => {
-    res.render('updates', {changelog: changelogFile});
-  })
 }
 
 function init(app) {
   app.use(cookieParser());
   app.use(session({
-//    store: memoryStore,
-    store: redisStore,
+    store: passportStore,
+//    store: redisStore,
     secret: "secret",
     resave: false,
     saveUninitialized: false
