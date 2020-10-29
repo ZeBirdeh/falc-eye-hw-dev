@@ -11,6 +11,7 @@ const request = require('request');
 const fs = require('fs');
 const path = require('path');
 const memoryStore = require('./memory-store-db.js');
+const redisStore = require('./redis-db.js');
 
 const apiAccount = require('../../falc-eye-hw-google-api-u5kt7grp.json');
 const grecaptchaAccount = require('../../falc-eye-hw-grecaptcha-rg2qm9fd0.json');
@@ -63,7 +64,7 @@ function initPassport() {
             return done(err, false);
           }
           if (!isSame) {
-            console.log(`Passwords do not match. User: ${docData.password} ${password}`);
+            //console.log(`Passwords do not match. User: ${docData.password} ${password}`);
             return done(null, false);
           }
           console.log(`Succesfully logged in ${username}`);
@@ -232,7 +233,8 @@ function initUser(app) {
 function init(app) {
   app.use(cookieParser());
   app.use(session({
-    store: memoryStore,
+//    store: memoryStore,
+    store: redisStore,
     secret: "secret",
     resave: false,
     saveUninitialized: false
