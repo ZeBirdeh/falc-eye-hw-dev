@@ -2,11 +2,16 @@ const admin = require('firebase-admin');
 const bcrypt = require('bcrypt');
 var db = admin.firestore();
 
+const {logger} = require('./user-logger.js');
+const logMeta = {
+  src: 'user/auth-user-db.js'
+}
+
 function getUsers(username) {
     var userRef = db.collection('users');
     var getDoc = userRef.where('username', '==', username).get().then(snapshot => {
         if (snapshot.empty) {
-            console.log('No matching users.');
+            logger.debug(`No users found with username ${username}`, logMeta);
             return;
         }
 
@@ -14,7 +19,7 @@ function getUsers(username) {
         snapshot.forEach(doc => {
             users.push(doc);
         });
-        console.log(`User found with username ${users[0].data().username}`);
+        logger.debug(`User found with username ${users[0].data().username}`, logMeta);
         // Returns the document object, so will have to call doc.data() on it
         return users[0];
     }).catch(err => {
@@ -65,13 +70,13 @@ function verifyUser(username) {
     let userRef = db.collection('users');
     let updateDoc = userRef.where('username', '==', username).get().then(snapshot => {
         if (snapshot.empty) {
-            console.log('No matching users.');
+            logger.debug(`No users found with username ${username}`, logMeta);
             return;
         }
 
         var users = [];
         snapshot.forEach(doc => {
-            console.log(`[LOG] authUserDB: Verified user ${username}`);
+            logger.debug(`Verified user ${username}`, logMeta);
             users.push(userRef.doc(doc.id).update({ verified: true }));
         });
         return users;
@@ -86,7 +91,7 @@ function getClasses(username) {
     var userRef = db.collection('class-enrollment');
     var getDoc = userRef.where('username', '==', username).get().then(snapshot => {
       if (snapshot.empty) {
-        console.log('[LOG] user-db: No enrolled classes');
+        //console.log('[LOG] user-db: No enrolled classes');
         return {classes: []};
       }
   
