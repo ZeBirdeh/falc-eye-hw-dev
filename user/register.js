@@ -104,6 +104,7 @@ function init(app) {
       })
     } else {
       // Bad verification
+      logger.debug('Bad verification token received', logMeta);
       res.redirect('/');
     }
   });
