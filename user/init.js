@@ -24,6 +24,9 @@ if (process.env.NODE_ENV !== 'production') {
   HOST = 'localhost:5005';
 }
 const LOGIN_REDIRECT = '/profile';
+const logMeta = {
+  src: 'user/init.js'
+}
 
 const OAuth2 = google.auth.OAuth2;
 const oauth2Client = new OAuth2(
@@ -35,7 +38,7 @@ oauth2Client.setCredentials({ refresh_token: apiAccount.refresh_token })
 // The code to authenticate a user by comparing a given username-password combination
 function initPassport() {
   //console.log("Passport initialized");
-  logger.info("Passport initialized", {src: "user/init.js"});
+  logger.info("Passport initialized", logMeta);
   // Serialize and deserialize user to store information for sessions
   passport.serializeUser(function(userdoc, done) {
     //console.log(`Serialized user with id ${userdoc.id}`);
@@ -57,25 +60,22 @@ function initPassport() {
         if (!docData) {
           return done(null, false);
         }
-        if (!docData.verified) {
-          return done(null, false);
-        }
-        if (docData.ban_until > Math.floor(Date.now() / 1000)) {
-          return done(null, false);
-        }
 
         bcrypt.compare(password, docData.password, (err, isSame) => {
           if (err) {
-            console.log(`Error in comparing passwords. ${err}`);
+            //console.log(`Error in comparing passwords. ${err}`);
+            logger.warn(`Error in comparing passwords: ${err}`, logMeta);
             return done(err, false);
           }
           if (!isSame) {
             //console.log(`Passwords do not match. User: ${docData.password} ${password}`);
+            logger.debug("Passwords do not match.", logMeta);
             return done(null, false);
           }
-          console.log(`Succesfully logged in ${username}`);
+          //console.log(`Succesfully logged in ${username}`);
+          logger.info(`Successfully logged in user ${username}`, logMeta);
           passportStore.set(doc.id, {id: doc.id, data: docData}, err => {if(err){console.log(err)}})
-          return done(null, doc);
+          return done(null, {id: doc.id, data: docData});
         });
       }).catch((err) => {
         console.log(err);
@@ -93,25 +93,44 @@ function initUser(app) {
       res.redirect('/login?e=1');
       return;
     }
-    authUserDB.getUsers(username).then(doc => {
-      var docData = doc.data();
-      if (!docData) {
+    // Pass the request to the passport authenticator
+    //passport.authenticate('local', { failureRedirect: '/login?e=1' })(req, res, next);
+
+    // Passport authenticate using custom callback
+    passport.authenticate('local', (err, user) => {
+      // Gets the err and user from done in the passport strategy
+      if (err) {
+        logger.warn(`Error in authentication: ${err}`, logMeta);
         res.redirect('/login?e=1');
         return;
       }
-      if (!docData.verified) {
+      if (!user) {
+        logger.warn('Empty user object authenticated', logMeta);
+        res.redirect('/login?e=1');
+        return;
+      }
+      // Check if the user is verified and not banned
+      if (!user.data.verified) {
+        logger.info(`Unverified user ${user.data.username} login`, logMeta);
         res.redirect('/login?e=2');
         return;
       }
-      if (docData.ban_until > Math.floor(Date.now() / 1000)) {
+      if (user.data.ban_until > Math.floor(Date.now() / 1000)) {
+        logger.info(`Banned user ${user.data.username} login`, logMeta);
         res.redirect('/login?e=3');
         return;
       }
-      // Pass the request to the passport authenticator
-      passport.authenticate('local', { failureRedirect: '/login?e=1' })(req, res, next);
-    })
+
+      // Set the user
+      req.session.user = user;
+      req.login(user, function(err) {
+        if (err) { return next(err); }
+        logger.debug(`Logged in user ${username}`, logMeta);
+        return next();
+      });
+    })(req, res, next);
   }, (req, res) => {
-    req.session.user = req.session.passport.user;
+    logger.debug(`Received authentication ${req.session.user.data.username}`, logMeta);
     req.session.save(function(err) {
       // session saved
       if (req.body.redirect) {
