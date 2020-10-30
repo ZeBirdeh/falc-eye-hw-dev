@@ -13,18 +13,17 @@ const path = require('path');
 //const memoryStore = require('./memory-store-db.js');
 //const redisStore = require('./redis-db.js');
 const passportStore = require('./store-db.js');
+const {logger} = require('./user-logger.js');
 
 const apiAccount = require('../../falc-eye-hw-google-api-u5kt7grp.json');
 const grecaptchaAccount = require('../../falc-eye-hw-grecaptcha-rg2qm9fd0.json');
-const LOGIN_REDIRECT = '/profile';
 const SECRET_KEY = require('../../falc-eye-hw-invite-key-ou6pw5e5.json').secret;
-const changelogFile = fs.readFileSync(path.join(__dirname, '..', '..', 'CHANGELOG.txt'));
 
 let HOST = 'https://falkai.xyz';
 if (process.env.NODE_ENV !== 'production') {
   HOST = 'localhost:5005';
 }
-
+const LOGIN_REDIRECT = '/profile';
 
 const OAuth2 = google.auth.OAuth2;
 const oauth2Client = new OAuth2(
@@ -35,7 +34,8 @@ const oauth2Client = new OAuth2(
 oauth2Client.setCredentials({ refresh_token: apiAccount.refresh_token })
 // The code to authenticate a user by comparing a given username-password combination
 function initPassport() {
-  console.log("Passport initialized");
+  //console.log("Passport initialized");
+  logger.info("Passport initialized", {src: "user/init.js"});
   // Serialize and deserialize user to store information for sessions
   passport.serializeUser(function(userdoc, done) {
     //console.log(`Serialized user with id ${userdoc.id}`);

@@ -1,4 +1,5 @@
-path = require('path');
+const path = require('path');
+const changelogFile = fs.readFileSync(path.join(__dirname, '..', '..', 'CHANGELOG.txt'));
 
 // Set up app pages
 function init(app) {
